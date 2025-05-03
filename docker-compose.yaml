@@ -12,7 +12,7 @@ services:
       - '5432:5432'
 
   springboot:
-    build: .
+    image: tayjiro/tutorapi:latest
     depends_on:
       - postgres
     environment:
