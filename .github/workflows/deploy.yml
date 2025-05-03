@@ -19,7 +19,7 @@ jobs:
           distribution: 'temurin'
 
       - name: Build Spring Boot JAR
-        run: ./mvnw clean package -DskipTests
+        run: mvn clean package -DskipTests
 
       - name: Build Docker image
         run: docker build -t tayjiro/tutorapi:latest .
