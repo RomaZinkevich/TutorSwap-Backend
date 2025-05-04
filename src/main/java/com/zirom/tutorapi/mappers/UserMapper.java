@@ -1,5 +1,6 @@
 package com.zirom.tutorapi.mappers;
 
+import com.zirom.tutorapi.domain.dtos.UpdateUserRequestDto;
 import com.zirom.tutorapi.domain.dtos.UserDto;
 import com.zirom.tutorapi.domain.entities.User;
 import org.mapstruct.ReportingPolicy;

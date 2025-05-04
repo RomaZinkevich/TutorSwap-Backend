@@ -16,7 +16,8 @@ import com.zirom.tutorapi.domain.entities.Skill;
 @Builder
 public class User {
     @Id
-    private String id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID id;
 
     @Column(nullable = false, unique = true)
     private String email;

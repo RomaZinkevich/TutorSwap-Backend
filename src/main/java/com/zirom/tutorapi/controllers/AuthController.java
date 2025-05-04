@@ -20,9 +20,9 @@ public class AuthController {
     private final UserMapper userMapper;
 
     @PostMapping
-    public ResponseEntity<NotRegisteredUserResponse> googleAuth(@RequestBody GoogleAuthRequestDto request) {
+    public ResponseEntity<GoogleAuthUserResponse> googleAuth(@RequestBody GoogleAuthRequestDto request) {
         Optional<User> authenticateUser = googleOAuthService.authenticate(request.getIdToken());
-        NotRegisteredUserResponse response = new NotRegisteredUserResponse();
+        GoogleAuthUserResponse response = new GoogleAuthUserResponse();
         if (authenticateUser.isPresent()) {
             User user = authenticateUser.get();
             UserDto userDto = userMapper.toDto(user);

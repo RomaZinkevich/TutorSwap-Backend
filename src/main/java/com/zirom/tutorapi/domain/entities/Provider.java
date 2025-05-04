@@ -1,0 +1,30 @@
+package com.zirom.tutorapi.domain.entities;
+
+import com.zirom.tutorapi.domain.dtos.UserDto;
+import jakarta.persistence.*;
+import lombok.*;
+
+import java.util.UUID;
+
+@Entity
+@Table(name = "providers")
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@Setter
+@Builder
+public class Provider {
+    @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID id;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
+
+    @Column(nullable = false)
+    private String name;
+
+    @Column(nullable = false)
+    private String provider_user_id;
+}

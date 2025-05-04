@@ -8,4 +8,5 @@ import org.mapstruct.ReportingPolicy;
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface SkillMapper {
     SkillDto toDto(Skill skill);
+    Skill toEntity(SkillDto skillDto);
 }
