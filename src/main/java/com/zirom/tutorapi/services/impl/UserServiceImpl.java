@@ -24,8 +24,8 @@ public class UserServiceImpl implements UserService {
     private final SkillService skillService;
 
     @Override
-    public Optional<User> findByGoogleSub(String googleSub) {
-        return userRepository.findById(googleSub);
+    public Optional<User> findById(UUID id) {
+        return userRepository.findById(id);
     }
 
     @Override

@@ -12,16 +12,16 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Optional;
 
 @RestController
-@RequestMapping(path="/api/v1/auth")
+@RequestMapping(path="/api/v1/auth/google")
 @RequiredArgsConstructor
-public class AuthController {
+public class GoogleAuthController {
 
     private final GoogleOAuthService googleOAuthService;
     private final UserMapper userMapper;
 
-    @PostMapping
+    @PostMapping("/")
     public ResponseEntity<GoogleAuthUserResponse> googleAuth(@RequestBody GoogleAuthRequestDto request) {
-        Optional<User> authenticateUser = googleOAuthService.authenticate(request.getIdToken());
+        Optional<User> authenticateUser = googleOAuthService.googleAuthenticate(request.getIdToken());
         GoogleAuthUserResponse response = new GoogleAuthUserResponse();
         if (authenticateUser.isPresent()) {
             User user = authenticateUser.get();

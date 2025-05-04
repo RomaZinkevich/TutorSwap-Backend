@@ -25,6 +25,6 @@ public class Provider {
     @Column(nullable = false)
     private String name;
 
-    @Column(nullable = false)
-    private String provider_user_id;
+    @Column(nullable = false, unique = true)
+    private String providerUserId;
 }

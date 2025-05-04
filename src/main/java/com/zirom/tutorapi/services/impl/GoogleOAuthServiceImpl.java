@@ -6,6 +6,7 @@ import com.google.api.client.googleapis.util.Utils;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.JsonFactory;
 import com.zirom.tutorapi.domain.dtos.*;
+import com.zirom.tutorapi.domain.entities.Provider;
 import com.zirom.tutorapi.domain.entities.Skill;
 import com.zirom.tutorapi.domain.entities.User;
 import com.zirom.tutorapi.mappers.UserMapper;
@@ -13,6 +14,7 @@ import com.zirom.tutorapi.repositories.SkillRepository;
 import com.zirom.tutorapi.services.GoogleOAuthService;
 import com.zirom.tutorapi.services.SkillService;
 import com.zirom.tutorapi.services.UserService;
+import com.zirom.tutorapi.services.providerService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -38,6 +40,7 @@ import java.util.*;
 @RequiredArgsConstructor
 public class GoogleOAuthServiceImpl implements GoogleOAuthService {
     private final UserMapper userMapper;
+    private final providerService providerService;
     @Value("${GOOGLE_CLIENT_ID}")
     private String clientId;
 
@@ -65,9 +68,9 @@ public class GoogleOAuthServiceImpl implements GoogleOAuthService {
     }
 
     @Override
-    public Optional<User> authenticate(String idToken) {
+    public Optional<User> googleAuthenticate(String idToken) {
         GoogleUserInfo userInfo = verifyAndParseIdToken(idToken);
-        return userService.findByGoogleSub(userInfo.getSub());
+        return providerService.getUserByProviderIdAndName(userInfo.getSub(), "google");
     }
 
     @Override
@@ -76,7 +79,6 @@ public class GoogleOAuthServiceImpl implements GoogleOAuthService {
         GoogleUserInfo userInfo = verifyAndParseIdToken(dto.getIdToken());
         User user = new User();
         user.setEmail(userInfo.getEmail());
-        user.setId(userInfo.getSub());
         user.setName(dto.getName());
         user.setProfileImage(dto.getProfileImage());
         user.setDescription(dto.getDescription());
@@ -90,7 +92,14 @@ public class GoogleOAuthServiceImpl implements GoogleOAuthService {
         Skill skillToTeach = skillService.findById(dto.getSkillToTeachId());
         user.setSkillToTeach(skillToTeach);
 
-        return userService.save(user);
+        user = userService.save(user);
+
+        Provider newProvider = new Provider();
+        newProvider.setName("google");
+        newProvider.setProviderUserId(userInfo.getSub());
+        newProvider.setUser(user);
+
+        return providerService.save(newProvider).getUser();
 
     }
 
@@ -99,7 +108,7 @@ public class GoogleOAuthServiceImpl implements GoogleOAuthService {
         Map<String, Object> claims = new HashMap<>();
         return Jwts.builder()
                 .setClaims(claims)
-                .setSubject(userDto.getId())
+                .setSubject(String.valueOf(userDto.getId()))
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + jwtExpiryMs))
                 .signWith(getSigningKey(), SignatureAlgorithm.HS256)
@@ -109,8 +118,8 @@ public class GoogleOAuthServiceImpl implements GoogleOAuthService {
     @Override
     @Transactional
     public UserDto validateToken(String token) {
-        String id = extractId(token);
-        return userService.findByGoogleSub(id).map(userMapper::toDto).orElseThrow(() -> new IllegalArgumentException("Invalid ID token."));
+        UUID id = UUID.fromString(extractId(token));
+        return userService.findById(id).map(userMapper::toDto).orElseThrow(() -> new IllegalArgumentException("Invalid ID token."));
     }
 
     private GoogleUserInfo verifyAndParseIdToken(String idTokenString){

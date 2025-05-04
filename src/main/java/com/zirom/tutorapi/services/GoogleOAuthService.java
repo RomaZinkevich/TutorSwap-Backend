@@ -8,7 +8,7 @@ import java.util.Optional;
 
 public interface GoogleOAuthService {
 
-    Optional<User> authenticate(String idToken);
+    Optional<User> googleAuthenticate(String idToken);
 
     User signup(SignUpRequestDto dto);
 

@@ -11,7 +11,8 @@ import java.util.UUID;
 
 public interface UserService {
 
-    Optional<User> findByGoogleSub(String googleSub);
+    Optional<User> findById(UUID id);
+
     User save(User user);
 
     User update(UpdateUserRequestDto updatedUser, UUID userId);
