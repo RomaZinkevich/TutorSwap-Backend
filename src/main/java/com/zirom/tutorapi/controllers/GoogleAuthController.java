@@ -19,7 +19,7 @@ public class GoogleAuthController {
     private final GoogleOAuthService googleOAuthService;
     private final UserMapper userMapper;
 
-    @PostMapping("/")
+    @PostMapping()
     public ResponseEntity<GoogleAuthUserResponse> googleAuth(@RequestBody GoogleAuthRequestDto request) {
         Optional<User> authenticateUser = googleOAuthService.googleAuthenticate(request.getIdToken());
         GoogleAuthUserResponse response = new GoogleAuthUserResponse();
