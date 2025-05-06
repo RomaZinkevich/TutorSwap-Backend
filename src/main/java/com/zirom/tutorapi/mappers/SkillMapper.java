@@ -1,5 +1,6 @@
 package com.zirom.tutorapi.mappers;
 
+import com.zirom.tutorapi.domain.dtos.CreateSkillRequest;
 import com.zirom.tutorapi.domain.dtos.SkillDto;
 import com.zirom.tutorapi.domain.entities.Skill;
 import org.mapstruct.Mapper;
@@ -9,4 +10,5 @@ import org.mapstruct.ReportingPolicy;
 public interface SkillMapper {
     SkillDto toDto(Skill skill);
     Skill toEntity(SkillDto skillDto);
+    Skill toEntity(CreateSkillRequest createSkillRequest);
 }

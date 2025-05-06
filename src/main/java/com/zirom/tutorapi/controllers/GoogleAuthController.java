@@ -4,6 +4,7 @@ import com.zirom.tutorapi.domain.dtos.*;
 import com.zirom.tutorapi.domain.entities.User;
 import com.zirom.tutorapi.mappers.UserMapper;
 import com.zirom.tutorapi.services.GoogleOAuthService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,7 +21,7 @@ public class GoogleAuthController {
     private final UserMapper userMapper;
 
     @PostMapping()
-    public ResponseEntity<GoogleAuthUserResponse> googleAuth(@RequestBody GoogleAuthRequestDto request) {
+    public ResponseEntity<GoogleAuthUserResponse> googleAuth(@RequestBody @Valid GoogleAuthRequestDto request) {
         Optional<User> authenticateUser = googleOAuthService.googleAuthenticate(request.getIdToken());
         GoogleAuthUserResponse response = new GoogleAuthUserResponse();
         if (authenticateUser.isPresent()) {
@@ -40,7 +41,7 @@ public class GoogleAuthController {
     }
 
     @PostMapping(path = "/signup")
-    public ResponseEntity<String> registerUser(@RequestBody SignUpRequestDto request) {
+    public ResponseEntity<String> registerUser(@RequestBody @Valid SignUpRequestDto request) {
         User newUser = googleOAuthService.signup(request);
         UserDto userDto = userMapper.toDto(newUser);
         String token = googleOAuthService.generateToken(userDto);

@@ -9,6 +9,7 @@ import com.zirom.tutorapi.mappers.SkillMapper;
 import com.zirom.tutorapi.mappers.UserMapper;
 import com.zirom.tutorapi.services.UserService;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,7 +17,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -45,7 +45,7 @@ public class UserController {
     @PutMapping
     public ResponseEntity<UserDto> updateUser(
             Authentication authentication,
-            @RequestBody UpdateUserRequestDto updatedUserDto
+            @RequestBody @Valid UpdateUserRequestDto updatedUserDto
     ) {
         UserDto loggedInUser = (UserDto) authentication.getPrincipal();
         User updatedUser = userService.update(updatedUserDto, loggedInUser.getId());
