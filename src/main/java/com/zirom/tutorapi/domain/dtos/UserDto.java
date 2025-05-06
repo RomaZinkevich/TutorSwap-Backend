@@ -1,5 +1,6 @@
 package com.zirom.tutorapi.domain.dtos;
 
+import com.zirom.tutorapi.domain.Role;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -22,4 +23,5 @@ public class UserDto {
     private SkillDto skillToTeach;
     private String wantToLearnDetail;
     private String wantToTeachDetail;
+    private Role role;
 }

@@ -6,6 +6,7 @@ import com.zirom.tutorapi.domain.entities.User;
 import org.mapstruct.ReportingPolicy;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.springframework.security.core.userdetails.UserDetails;
 
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface UserMapper {

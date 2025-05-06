@@ -5,28 +5,28 @@ import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
 import com.google.api.client.googleapis.util.Utils;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.JsonFactory;
+import com.zirom.tutorapi.domain.Role;
 import com.zirom.tutorapi.domain.dtos.*;
 import com.zirom.tutorapi.domain.entities.Provider;
 import com.zirom.tutorapi.domain.entities.Skill;
 import com.zirom.tutorapi.domain.entities.User;
 import com.zirom.tutorapi.mappers.UserMapper;
-import com.zirom.tutorapi.repositories.SkillRepository;
 import com.zirom.tutorapi.services.GoogleOAuthService;
 import com.zirom.tutorapi.services.SkillService;
 import com.zirom.tutorapi.services.UserService;
 import com.zirom.tutorapi.services.providerService;
-import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.LinkedMultiValueMap;
@@ -41,6 +41,7 @@ import java.util.*;
 public class GoogleOAuthServiceImpl implements GoogleOAuthService {
     private final UserMapper userMapper;
     private final providerService providerService;
+    private final UserDetailsService userDetailsService;
     @Value("${GOOGLE_CLIENT_ID}")
     private String clientId;
 
@@ -85,6 +86,7 @@ public class GoogleOAuthServiceImpl implements GoogleOAuthService {
         user.setUniversityName(dto.getUniversityName());
         user.setWantToLearnDetail(dto.getWantToLearnDetail());
         user.setWantToTeachDetail(dto.getWantToTeachDetail());
+        user.setRole(Role.USER);
 
         Skill skillToLearn = skillService.findById(dto.getSkillToLearnId());
         user.setSkillToLearn(skillToLearn);
@@ -106,6 +108,7 @@ public class GoogleOAuthServiceImpl implements GoogleOAuthService {
     @Override
     public String generateToken(UserDto userDto) {
         Map<String, Object> claims = new HashMap<>();
+        claims.put("roles", List.of(userDto.getRole().name()));
         return Jwts.builder()
                 .setClaims(claims)
                 .setSubject(String.valueOf(userDto.getId()))
@@ -117,9 +120,9 @@ public class GoogleOAuthServiceImpl implements GoogleOAuthService {
 
     @Override
     @Transactional
-    public UserDto validateToken(String token) {
-        UUID id = UUID.fromString(extractId(token));
-        return userService.findById(id).map(userMapper::toDto).orElseThrow(() -> new IllegalArgumentException("Invalid ID token."));
+    public UserDetails validateToken(String token) {
+        String userId = extractId(token);
+        return userDetailsService.loadUserByUsername(userId);
     }
 
     private GoogleUserInfo verifyAndParseIdToken(String idTokenString){
@@ -174,12 +177,12 @@ public class GoogleOAuthServiceImpl implements GoogleOAuthService {
     }
 
     private String extractId(String token) {
-        Claims claims =  Jwts.parserBuilder()
+        return Jwts.parserBuilder()
                 .setSigningKey(getSigningKey())
                 .build()
                 .parseClaimsJws(token)
-                .getBody();
-        return claims.getSubject();
+                .getBody()
+                .getSubject();
     }
 
     private Key getSigningKey() {

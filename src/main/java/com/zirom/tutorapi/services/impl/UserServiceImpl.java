@@ -2,13 +2,19 @@ package com.zirom.tutorapi.services.impl;
 
 import com.zirom.tutorapi.domain.dtos.SkillDto;
 import com.zirom.tutorapi.domain.dtos.UpdateUserRequestDto;
+import com.zirom.tutorapi.domain.dtos.UserDto;
 import com.zirom.tutorapi.domain.entities.Skill;
 import com.zirom.tutorapi.domain.entities.User;
+import com.zirom.tutorapi.mappers.SkillMapper;
+import com.zirom.tutorapi.mappers.UserMapper;
 import com.zirom.tutorapi.repositories.UserRepository;
+import com.zirom.tutorapi.security.ApiUserDetails;
 import com.zirom.tutorapi.services.SkillService;
 import com.zirom.tutorapi.services.UserService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.Hibernate;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,6 +28,7 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final SkillService skillService;
+    private final UserMapper userMapper;
 
     @Override
     public Optional<User> findById(UUID id) {
@@ -67,5 +74,16 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<User> findByTeachToLearn(Skill skill) {
         return userRepository.findAllBySkillToLearn(skill);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public UserDto getUserFromPrincipal(ApiUserDetails userDetails) {
+        //For some reason I cant pass userDetails.getUser() directly due to LazyLoading issues
+        //So I have to reinitialize user object from ID
+        UUID userId = userDetails.getUser().getId();
+        User user = userRepository.findById(userId).orElseThrow(EntityNotFoundException::new);
+
+        return userMapper.toDto(user);
     }
 }
