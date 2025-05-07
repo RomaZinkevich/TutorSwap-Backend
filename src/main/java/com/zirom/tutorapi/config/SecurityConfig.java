@@ -36,6 +36,11 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http, JwtAuthenticationFilter jwtAuthenticationFilter) throws Exception {
         http
                 .authorizeHttpRequests(auth -> auth
+                        .requestMatchers(
+                                "/v3/api-docs/**",
+                                "/swagger-ui/**",
+                                "/swagger-ui.html"
+                        ).permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/v1/auth/google").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/v1/auth/google/signup").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/v1/skill/**").permitAll()

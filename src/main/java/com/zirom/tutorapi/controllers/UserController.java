@@ -9,6 +9,7 @@ import com.zirom.tutorapi.mappers.SkillMapper;
 import com.zirom.tutorapi.mappers.UserMapper;
 import com.zirom.tutorapi.security.ApiUserDetails;
 import com.zirom.tutorapi.services.UserService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -31,12 +32,14 @@ public class UserController {
     private final SkillMapper skillMapper;
 
     @GetMapping
+    @SecurityRequirement(name = "BearerAuth")
     public ResponseEntity<UserDto> getUserInfo(Authentication authentication) {
         UserDto user = userService.getUserFromPrincipal((ApiUserDetails) authentication.getPrincipal());
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
     @GetMapping(path="/{id}")
+    @SecurityRequirement(name = "BearerAuth")
     public ResponseEntity<UserDto> getUserInfoById(@PathVariable UUID id) {
         User user = userService.findById(id).orElseThrow(() -> new EntityNotFoundException("User not found with id: " + id));;
         UserDto userDto = userMapper.toDto(user);
@@ -44,6 +47,7 @@ public class UserController {
     }
 
     @PutMapping
+    @SecurityRequirement(name = "BearerAuth")
     public ResponseEntity<UserDto> updateUser(
             Authentication authentication,
             @RequestBody @Valid UpdateUserRequestDto updatedUserDto
@@ -55,6 +59,7 @@ public class UserController {
     }
 
     @GetMapping(path="/learn-to-teach")
+    @SecurityRequirement(name = "BearerAuth")
     public ResponseEntity<List<UserDto>> getUsersLearnToTeach(Authentication authentication) {
         UserDto loggedInUser = userService.getUserFromPrincipal((ApiUserDetails) authentication.getPrincipal());
         Skill skill = skillMapper.toEntity(loggedInUser.getSkillToLearn());
@@ -64,6 +69,7 @@ public class UserController {
     }
 
     @GetMapping(path="/teach-to-learn")
+    @SecurityRequirement(name = "BearerAuth")
     public ResponseEntity<List<UserDto>> getUsersTeachToLearn(Authentication authentication) {
         UserDto loggedInUser = userService.getUserFromPrincipal((ApiUserDetails) authentication.getPrincipal());
         Skill skill = skillMapper.toEntity(loggedInUser.getSkillToTeach());
