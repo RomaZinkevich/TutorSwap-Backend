@@ -5,7 +5,7 @@ import com.zirom.tutorapi.domain.entities.User;
 
 import java.util.Optional;
 
-public interface providerService {
+public interface ProviderService {
     Optional<User> getUserByProviderIdAndName(String providerId, String providerName);
     Provider save(Provider provider);
 }

@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Entity
 @Table(name="connection_requests")
@@ -16,6 +17,9 @@ import java.time.LocalDateTime;
 public class ConnectionRequest {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
+    UUID id;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "sender_id", nullable = false)
     private User senderUser;
@@ -28,7 +32,7 @@ public class ConnectionRequest {
     private String messageContent;
 
     @Column(nullable = false)
-    private boolean isAccepted;
+    private boolean accepted;
 
     @Column(nullable = false)
     private LocalDateTime createdAt;
@@ -40,6 +44,6 @@ public class ConnectionRequest {
     @PrePersist
     protected void onCreate() {
         this.createdAt = LocalDateTime.now();
-        this.isAccepted = false;
+        this.accepted = false;
     }
 }

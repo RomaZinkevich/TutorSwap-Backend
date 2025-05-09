@@ -3,7 +3,7 @@ package com.zirom.tutorapi.services.impl;
 import com.zirom.tutorapi.domain.entities.Provider;
 import com.zirom.tutorapi.domain.entities.User;
 import com.zirom.tutorapi.repositories.ProviderRepository;
-import com.zirom.tutorapi.services.providerService;
+import com.zirom.tutorapi.services.ProviderService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -11,7 +11,7 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-public class providerServiceImpl implements providerService {
+public class providerServiceImpl implements ProviderService {
     private final ProviderRepository providerRepository;
 
     @Override

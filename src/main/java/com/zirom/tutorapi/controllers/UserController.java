@@ -41,7 +41,7 @@ public class UserController {
     @GetMapping(path="/{id}")
     @SecurityRequirement(name = "BearerAuth")
     public ResponseEntity<UserDto> getUserInfoById(@PathVariable UUID id) {
-        User user = userService.findById(id).orElseThrow(() -> new EntityNotFoundException("User not found with id: " + id));;
+        User user = userService.findById(id).orElseThrow(() -> new EntityNotFoundException("User not found with id: " + id));
         UserDto userDto = userMapper.toDto(user);
         return new ResponseEntity<>(userDto, HttpStatus.OK);
     }

@@ -14,4 +14,8 @@ public interface UserMapper {
     @Mapping(target = "skillToLearn", source = "skillToLearn")
     @Mapping(target = "skillToTeach", source = "skillToTeach")
     UserDto toDto(User user);
+
+    @Mapping(target = "skillToLearn", source = "skillToLearn")
+    @Mapping(target = "skillToTeach", source = "skillToTeach")
+    User toEntity(UserDto userDto);
 }

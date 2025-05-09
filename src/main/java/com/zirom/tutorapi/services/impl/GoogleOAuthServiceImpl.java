@@ -14,7 +14,7 @@ import com.zirom.tutorapi.mappers.UserMapper;
 import com.zirom.tutorapi.services.GoogleOAuthService;
 import com.zirom.tutorapi.services.SkillService;
 import com.zirom.tutorapi.services.UserService;
-import com.zirom.tutorapi.services.providerService;
+import com.zirom.tutorapi.services.ProviderService;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
@@ -40,7 +40,7 @@ import java.util.*;
 @RequiredArgsConstructor
 public class GoogleOAuthServiceImpl implements GoogleOAuthService {
     private final UserMapper userMapper;
-    private final providerService providerService;
+    private final ProviderService providerService;
     private final UserDetailsService userDetailsService;
     @Value("${GOOGLE_CLIENT_ID}")
     private String clientId;
