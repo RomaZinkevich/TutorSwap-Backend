@@ -8,7 +8,10 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
-@Table(name="connection_requests")
+@Table(
+        name="connection_requests",
+        uniqueConstraints = @UniqueConstraint(columnNames = {"sender_id", "receiver_id"})
+)
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
