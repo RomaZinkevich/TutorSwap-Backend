@@ -3,11 +3,13 @@ package com.zirom.tutorapi.services.impl;
 import com.zirom.tutorapi.domain.dtos.ConnectionRequestDto;
 import com.zirom.tutorapi.domain.dtos.CreateConnectionRequest;
 import com.zirom.tutorapi.domain.dtos.UserDto;
+import com.zirom.tutorapi.domain.entities.Connection;
 import com.zirom.tutorapi.domain.entities.ConnectionRequest;
 import com.zirom.tutorapi.domain.entities.User;
 import com.zirom.tutorapi.mappers.UserMapper;
 import com.zirom.tutorapi.repositories.ConnectionRequestRepository;
 import com.zirom.tutorapi.services.ConnectionRequestService;
+import com.zirom.tutorapi.services.ConnectionService;
 import com.zirom.tutorapi.services.UserService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +27,7 @@ public class ConnectionRequestServiceImpl implements ConnectionRequestService {
     private final ConnectionRequestRepository connectionRequestRepository;
     private final UserMapper userMapper;
     private final UserService userService;
+    private final ConnectionService connectionService;
 
     @Override
     public List<ConnectionRequest> getConnectionsByUser(UUID receiverId, boolean isAccepted) {
@@ -56,6 +59,13 @@ public class ConnectionRequestServiceImpl implements ConnectionRequestService {
                 id, loggedinUserDto.getId()
         ).orElseThrow(() -> new EntityNotFoundException("Connection request with matching id and receiver's id not found"));
         connectionRequest.setAccepted(true);
+
+        Connection newConnection = new Connection();
+
+        newConnection.setConnectionType(connectionRequest.getConnectionType());
+        newConnection.setUser(connectionRequest.getSenderUser());
+        newConnection.setPartnerUser(connectionRequest.getReceiverUser());
+        connectionService.createConnection(newConnection);
         return connectionRequestRepository.save(connectionRequest);
     }
 }
