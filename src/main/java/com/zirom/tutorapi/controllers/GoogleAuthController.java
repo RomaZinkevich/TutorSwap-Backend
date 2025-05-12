@@ -4,6 +4,7 @@ import com.zirom.tutorapi.domain.dtos.*;
 import com.zirom.tutorapi.domain.entities.User;
 import com.zirom.tutorapi.mappers.UserMapper;
 import com.zirom.tutorapi.services.GoogleOAuthService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -15,6 +16,7 @@ import java.util.Optional;
 @RestController
 @RequestMapping(path="/api/v1/auth/google")
 @RequiredArgsConstructor
+@Tag(name="Google OAuth")
 public class GoogleAuthController {
 
     private final GoogleOAuthService googleOAuthService;

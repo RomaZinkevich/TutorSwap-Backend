@@ -10,6 +10,7 @@ import com.zirom.tutorapi.mappers.UserMapper;
 import com.zirom.tutorapi.security.ApiUserDetails;
 import com.zirom.tutorapi.services.UserService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +26,7 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping(path="/api/v1/user")
 @RequiredArgsConstructor
+@Tag(name="User")
 public class UserController {
 
     private final UserService userService;

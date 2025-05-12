@@ -9,6 +9,7 @@ import com.zirom.tutorapi.security.ApiUserDetails;
 import com.zirom.tutorapi.services.ConnectionService;
 import com.zirom.tutorapi.services.UserService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,6 +24,7 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping(path="/api/v1/connection")
 @RequiredArgsConstructor
+@Tag(name="Connection")
 public class ConnectionContoller {
 
     private final ConnectionService connectionService;

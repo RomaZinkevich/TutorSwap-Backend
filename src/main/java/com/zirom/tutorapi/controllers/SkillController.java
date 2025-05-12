@@ -6,6 +6,7 @@ import com.zirom.tutorapi.domain.entities.Skill;
 import com.zirom.tutorapi.mappers.SkillMapper;
 import com.zirom.tutorapi.services.SkillService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -19,6 +20,7 @@ import java.util.UUID;
 @RestController
 @RequestMapping(path="/api/v1/skill")
 @RequiredArgsConstructor
+@Tag(name="Skill")
 public class SkillController {
 
     private final SkillService skillService;
