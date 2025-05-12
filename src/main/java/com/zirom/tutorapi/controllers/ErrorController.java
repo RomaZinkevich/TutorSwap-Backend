@@ -1,6 +1,6 @@
 package com.zirom.tutorapi.controllers;
 
-import com.zirom.tutorapi.domain.dtos.ApiErrorResponse;
+import com.zirom.tutorapi.domain.dtos.error.ApiErrorResponse;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;

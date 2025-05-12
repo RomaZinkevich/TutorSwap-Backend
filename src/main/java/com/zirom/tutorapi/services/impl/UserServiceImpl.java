@@ -1,11 +1,9 @@
 package com.zirom.tutorapi.services.impl;
 
-import com.zirom.tutorapi.domain.dtos.SkillDto;
-import com.zirom.tutorapi.domain.dtos.UpdateUserRequestDto;
-import com.zirom.tutorapi.domain.dtos.UserDto;
+import com.zirom.tutorapi.domain.dtos.user.UpdateUserRequest;
+import com.zirom.tutorapi.domain.dtos.user.UserDto;
 import com.zirom.tutorapi.domain.entities.Skill;
 import com.zirom.tutorapi.domain.entities.User;
-import com.zirom.tutorapi.mappers.SkillMapper;
 import com.zirom.tutorapi.mappers.UserMapper;
 import com.zirom.tutorapi.repositories.UserRepository;
 import com.zirom.tutorapi.security.ApiUserDetails;
@@ -13,8 +11,6 @@ import com.zirom.tutorapi.services.SkillService;
 import com.zirom.tutorapi.services.UserService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
-import org.hibernate.Hibernate;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -42,7 +38,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public User update(UpdateUserRequestDto updatedUser, UUID userId) {
+    public User update(UpdateUserRequest updatedUser, UUID userId) {
         User existingUser = userRepository.findById(userId).orElseThrow(EntityNotFoundException::new);
         existingUser.setProfileImage(updatedUser.getProfileImage());
         existingUser.setName(updatedUser.getName());

@@ -1,4 +1,4 @@
-package com.zirom.tutorapi.domain.dtos;
+package com.zirom.tutorapi.domain.dtos.error;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

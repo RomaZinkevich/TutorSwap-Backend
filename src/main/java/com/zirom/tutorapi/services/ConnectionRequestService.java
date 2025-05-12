@@ -1,9 +1,8 @@
 package com.zirom.tutorapi.services;
 
-import com.zirom.tutorapi.domain.dtos.CreateConnectionRequest;
-import com.zirom.tutorapi.domain.dtos.UserDto;
+import com.zirom.tutorapi.domain.dtos.connection.CreateConnectionRequest;
+import com.zirom.tutorapi.domain.dtos.user.UserDto;
 import com.zirom.tutorapi.domain.entities.ConnectionRequest;
-import com.zirom.tutorapi.domain.entities.User;
 
 import java.util.List;
 import java.util.UUID;

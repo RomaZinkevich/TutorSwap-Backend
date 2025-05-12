@@ -1,14 +1,10 @@
 package com.zirom.tutorapi.services;
 
-import com.zirom.tutorapi.domain.dtos.SkillDto;
-import com.zirom.tutorapi.domain.dtos.UpdateUserRequestDto;
-import com.zirom.tutorapi.domain.dtos.UserDto;
+import com.zirom.tutorapi.domain.dtos.user.UpdateUserRequest;
+import com.zirom.tutorapi.domain.dtos.user.UserDto;
 import com.zirom.tutorapi.domain.entities.Skill;
 import com.zirom.tutorapi.domain.entities.User;
 import com.zirom.tutorapi.security.ApiUserDetails;
-import jakarta.persistence.EntityNotFoundException;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 import java.util.List;
 import java.util.Optional;
@@ -20,7 +16,7 @@ public interface UserService {
 
     User save(User user);
 
-    User update(UpdateUserRequestDto updatedUser, UUID userId);
+    User update(UpdateUserRequest updatedUser, UUID userId);
 
     List<User> findByLearnToTeach(Skill skill);
 

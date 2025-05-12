@@ -1,8 +1,7 @@
 package com.zirom.tutorapi.controllers;
 
-import com.zirom.tutorapi.domain.dtos.SkillDto;
-import com.zirom.tutorapi.domain.dtos.UpdateUserRequestDto;
-import com.zirom.tutorapi.domain.dtos.UserDto;
+import com.zirom.tutorapi.domain.dtos.user.UpdateUserRequest;
+import com.zirom.tutorapi.domain.dtos.user.UserDto;
 import com.zirom.tutorapi.domain.entities.Skill;
 import com.zirom.tutorapi.domain.entities.User;
 import com.zirom.tutorapi.mappers.SkillMapper;
@@ -52,7 +51,7 @@ public class UserController {
     @SecurityRequirement(name = "BearerAuth")
     public ResponseEntity<UserDto> updateUser(
             Authentication authentication,
-            @RequestBody @Valid UpdateUserRequestDto updatedUserDto
+            @RequestBody @Valid UpdateUserRequest updatedUserDto
     ) {
         UserDto loggedInUser = userService.getUserFromPrincipal((ApiUserDetails) authentication.getPrincipal());
         User updatedUser = userService.update(updatedUserDto, loggedInUser.getId());

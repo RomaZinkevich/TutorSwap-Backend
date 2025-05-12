@@ -1,10 +1,9 @@
 package com.zirom.tutorapi.controllers;
 
-import com.zirom.tutorapi.domain.dtos.ConnectionDto;
-import com.zirom.tutorapi.domain.dtos.UserDto;
+import com.zirom.tutorapi.domain.dtos.connection.ConnectionDto;
+import com.zirom.tutorapi.domain.dtos.user.UserDto;
 import com.zirom.tutorapi.domain.entities.Connection;
 import com.zirom.tutorapi.mappers.ConnectionMapper;
-import com.zirom.tutorapi.repositories.ConnectionRepository;
 import com.zirom.tutorapi.security.ApiUserDetails;
 import com.zirom.tutorapi.services.ConnectionService;
 import com.zirom.tutorapi.services.UserService;
@@ -19,7 +18,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping(path="/api/v1/connections")

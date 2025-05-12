@@ -1,6 +1,9 @@
 package com.zirom.tutorapi.controllers;
 
-import com.zirom.tutorapi.domain.dtos.*;
+import com.zirom.tutorapi.domain.dtos.auth.SignUpRequest;
+import com.zirom.tutorapi.domain.dtos.auth.google.GoogleAuthRequest;
+import com.zirom.tutorapi.domain.dtos.auth.google.GoogleAuthUserResponse;
+import com.zirom.tutorapi.domain.dtos.user.UserDto;
 import com.zirom.tutorapi.domain.entities.User;
 import com.zirom.tutorapi.mappers.UserMapper;
 import com.zirom.tutorapi.services.GoogleOAuthService;
@@ -23,7 +26,7 @@ public class GoogleAuthController {
     private final UserMapper userMapper;
 
     @PostMapping()
-    public ResponseEntity<GoogleAuthUserResponse> googleAuth(@RequestBody @Valid GoogleAuthRequestDto request) {
+    public ResponseEntity<GoogleAuthUserResponse> googleAuth(@RequestBody @Valid GoogleAuthRequest request) {
         Optional<User> authenticateUser = googleOAuthService.googleAuthenticate(request.getIdToken());
         GoogleAuthUserResponse response = new GoogleAuthUserResponse();
         if (authenticateUser.isPresent()) {
@@ -43,7 +46,7 @@ public class GoogleAuthController {
     }
 
     @PostMapping(path = "/signup")
-    public ResponseEntity<String> registerUser(@RequestBody @Valid SignUpRequestDto request) {
+    public ResponseEntity<String> registerUser(@RequestBody @Valid SignUpRequest request) {
         User newUser = googleOAuthService.signup(request);
         UserDto userDto = userMapper.toDto(newUser);
         String token = googleOAuthService.generateToken(userDto);

@@ -1,8 +1,8 @@
-package com.zirom.tutorapi.domain.dtos;
+package com.zirom.tutorapi.domain.dtos.user;
 
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -14,11 +14,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class SignUpRequestDto {
-
-    @NotBlank(message = "id_token is required")
-    private String idToken;
-
+public class UpdateUserRequest {
     @NotBlank(message = "name is required")
     @Size(min = 2, max = 200, message = "Name must be between {min} and {max} characters")
     private String name;

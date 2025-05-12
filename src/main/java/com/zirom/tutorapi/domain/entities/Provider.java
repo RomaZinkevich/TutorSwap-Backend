@@ -1,6 +1,5 @@
 package com.zirom.tutorapi.domain.entities;
 
-import com.zirom.tutorapi.domain.dtos.UserDto;
 import jakarta.persistence.*;
 import lombok.*;
 

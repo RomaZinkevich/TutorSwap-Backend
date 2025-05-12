@@ -1,6 +1,7 @@
-package com.zirom.tutorapi.domain.dtos;
+package com.zirom.tutorapi.domain.dtos.user;
 
 import com.zirom.tutorapi.domain.Role;
+import com.zirom.tutorapi.domain.dtos.skill.SkillDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

@@ -1,7 +1,7 @@
 package com.zirom.tutorapi.controllers;
 
-import com.zirom.tutorapi.domain.dtos.CreateSkillRequest;
-import com.zirom.tutorapi.domain.dtos.SkillDto;
+import com.zirom.tutorapi.domain.dtos.skill.CreateSkillRequest;
+import com.zirom.tutorapi.domain.dtos.skill.SkillDto;
 import com.zirom.tutorapi.domain.entities.Skill;
 import com.zirom.tutorapi.mappers.SkillMapper;
 import com.zirom.tutorapi.services.SkillService;

@@ -1,4 +1,4 @@
-package com.zirom.tutorapi.domain.dtos;
+package com.zirom.tutorapi.domain.dtos.auth.google;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;

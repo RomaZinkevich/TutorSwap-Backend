@@ -1,4 +1,4 @@
-package com.zirom.tutorapi.domain.dtos;
+package com.zirom.tutorapi.domain.dtos.connection;
 
 import com.zirom.tutorapi.domain.ConnectionType;
 import jakarta.validation.constraints.NotBlank;

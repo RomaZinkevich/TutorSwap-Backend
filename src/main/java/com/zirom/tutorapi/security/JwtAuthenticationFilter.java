@@ -1,6 +1,5 @@
 package com.zirom.tutorapi.security;
 
-import com.zirom.tutorapi.domain.dtos.UserDto;
 import com.zirom.tutorapi.services.GoogleOAuthService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -15,7 +14,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-import java.util.Collections;
 
 @RequiredArgsConstructor
 @Slf4j

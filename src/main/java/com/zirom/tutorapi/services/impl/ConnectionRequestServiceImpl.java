@@ -1,8 +1,7 @@
 package com.zirom.tutorapi.services.impl;
 
-import com.zirom.tutorapi.domain.dtos.ConnectionRequestDto;
-import com.zirom.tutorapi.domain.dtos.CreateConnectionRequest;
-import com.zirom.tutorapi.domain.dtos.UserDto;
+import com.zirom.tutorapi.domain.dtos.connection.CreateConnectionRequest;
+import com.zirom.tutorapi.domain.dtos.user.UserDto;
 import com.zirom.tutorapi.domain.entities.Connection;
 import com.zirom.tutorapi.domain.entities.ConnectionRequest;
 import com.zirom.tutorapi.domain.entities.User;
@@ -17,7 +16,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 @Service

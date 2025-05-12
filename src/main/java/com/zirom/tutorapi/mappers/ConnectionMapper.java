@@ -1,6 +1,6 @@
 package com.zirom.tutorapi.mappers;
 
-import com.zirom.tutorapi.domain.dtos.ConnectionDto;
+import com.zirom.tutorapi.domain.dtos.connection.ConnectionDto;
 import com.zirom.tutorapi.domain.entities.Connection;
 import org.mapstruct.Mapper;
 import org.mapstruct.ReportingPolicy;

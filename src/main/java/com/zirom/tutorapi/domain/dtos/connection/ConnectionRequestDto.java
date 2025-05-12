@@ -1,8 +1,7 @@
-package com.zirom.tutorapi.domain.dtos;
+package com.zirom.tutorapi.domain.dtos.connection;
 
 import com.zirom.tutorapi.domain.ConnectionType;
-import com.zirom.tutorapi.domain.entities.User;
-import jakarta.persistence.*;
+import com.zirom.tutorapi.domain.dtos.user.UserDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

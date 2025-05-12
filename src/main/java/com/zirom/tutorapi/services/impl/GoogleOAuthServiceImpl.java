@@ -6,7 +6,10 @@ import com.google.api.client.googleapis.util.Utils;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.JsonFactory;
 import com.zirom.tutorapi.domain.Role;
-import com.zirom.tutorapi.domain.dtos.*;
+import com.zirom.tutorapi.domain.dtos.auth.SignUpRequest;
+import com.zirom.tutorapi.domain.dtos.auth.google.GoogleTokenResponse;
+import com.zirom.tutorapi.domain.dtos.auth.google.GoogleUserInfo;
+import com.zirom.tutorapi.domain.dtos.user.UserDto;
 import com.zirom.tutorapi.domain.entities.Provider;
 import com.zirom.tutorapi.domain.entities.Skill;
 import com.zirom.tutorapi.domain.entities.User;
@@ -76,7 +79,7 @@ public class GoogleOAuthServiceImpl implements GoogleOAuthService {
 
     @Override
     @Transactional
-    public User signup(SignUpRequestDto dto) {
+    public User signup(SignUpRequest dto) {
         GoogleUserInfo userInfo = verifyAndParseIdToken(dto.getIdToken());
         User user = new User();
         user.setEmail(userInfo.getEmail());

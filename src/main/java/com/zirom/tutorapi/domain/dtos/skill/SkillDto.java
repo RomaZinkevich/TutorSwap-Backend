@@ -1,4 +1,4 @@
-package com.zirom.tutorapi.domain.dtos;
+package com.zirom.tutorapi.domain.dtos.skill;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -8,10 +8,11 @@ import lombok.NoArgsConstructor;
 import java.util.UUID;
 
 @Data
-@Builder
-@NoArgsConstructor
 @AllArgsConstructor
-public class GoogleUserInfo {
-    private String email;
-    private String sub;
+@NoArgsConstructor
+@Builder
+public class SkillDto {
+
+    private UUID id;
+    private String name;
 }

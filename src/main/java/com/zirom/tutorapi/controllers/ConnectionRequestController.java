@@ -1,8 +1,8 @@
 package com.zirom.tutorapi.controllers;
 
-import com.zirom.tutorapi.domain.dtos.ConnectionRequestDto;
-import com.zirom.tutorapi.domain.dtos.CreateConnectionRequest;
-import com.zirom.tutorapi.domain.dtos.UserDto;
+import com.zirom.tutorapi.domain.dtos.connection.ConnectionRequestDto;
+import com.zirom.tutorapi.domain.dtos.connection.CreateConnectionRequest;
+import com.zirom.tutorapi.domain.dtos.user.UserDto;
 import com.zirom.tutorapi.mappers.ConnectionRequestMapper;
 import com.zirom.tutorapi.security.ApiUserDetails;
 import com.zirom.tutorapi.services.ConnectionRequestService;
@@ -10,13 +10,11 @@ import com.zirom.tutorapi.services.UserService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import com.zirom.tutorapi.domain.entities.ConnectionRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -34,9 +32,9 @@ public class ConnectionRequestController {
     @SecurityRequirement(name = "BearerAuth")
     public ResponseEntity<List<ConnectionRequestDto>> getPrivatePendingConnectionRequests(Authentication authentication) {
         UserDto user = userService.getUserFromPrincipal((ApiUserDetails) authentication.getPrincipal());
-        List<ConnectionRequest> connectionRequests = connectionRequestService.getConnectionsByUser(user.getId(), false);
-        List<ConnectionRequestDto> connectionRequestDtos = connectionRequests.stream().map(connectionRequestMapper::toDto).toList();
-        return new ResponseEntity<>(connectionRequestDtos, HttpStatus.OK);
+        List<com.zirom.tutorapi.domain.entities.ConnectionRequest> connectionRequests = connectionRequestService.getConnectionsByUser(user.getId(), false);
+        List<ConnectionRequestDto> connectionRequestDtoDtos = connectionRequests.stream().map(connectionRequestMapper::toDto).toList();
+        return new ResponseEntity<>(connectionRequestDtoDtos, HttpStatus.OK);
     }
 
     @PostMapping
@@ -46,7 +44,7 @@ public class ConnectionRequestController {
             Authentication authentication
     ) {
         UserDto user = userService.getUserFromPrincipal((ApiUserDetails) authentication.getPrincipal());
-        ConnectionRequest connectionRequest = connectionRequestService.addConnectionRequest(user, createConnectionRequest);
+        com.zirom.tutorapi.domain.entities.ConnectionRequest connectionRequest = connectionRequestService.addConnectionRequest(user, createConnectionRequest);
         ConnectionRequestDto connectionRequestDto = connectionRequestMapper.toDto(connectionRequest);
         return new ResponseEntity<>(connectionRequestDto, HttpStatus.CREATED);
     }
@@ -58,7 +56,7 @@ public class ConnectionRequestController {
             Authentication authentication
     ) {
         UserDto user = userService.getUserFromPrincipal((ApiUserDetails) authentication.getPrincipal());
-        ConnectionRequest connectionRequest = connectionRequestService.updateAccepted(id, user);
+        com.zirom.tutorapi.domain.entities.ConnectionRequest connectionRequest = connectionRequestService.updateAccepted(id, user);
         ConnectionRequestDto connectionRequestDto = connectionRequestMapper.toDto(connectionRequest);
         return new ResponseEntity<>(connectionRequestDto, HttpStatus.OK);
     }
