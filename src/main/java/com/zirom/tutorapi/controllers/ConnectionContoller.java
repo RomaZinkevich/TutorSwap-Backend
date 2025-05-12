@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping(path="/api/v1/connection")
+@RequestMapping(path="/api/v1/connections")
 @RequiredArgsConstructor
 @Tag(name="Connection")
 public class ConnectionContoller {

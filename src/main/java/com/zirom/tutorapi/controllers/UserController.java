@@ -24,7 +24,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping(path="/api/v1/user")
+@RequestMapping(path="/api/v1/users")
 @RequiredArgsConstructor
 @Tag(name="User")
 public class UserController {
@@ -33,7 +33,7 @@ public class UserController {
     private final UserMapper userMapper;
     private final SkillMapper skillMapper;
 
-    @GetMapping
+    @GetMapping(path="/me")
     @SecurityRequirement(name = "BearerAuth")
     public ResponseEntity<UserDto> getUserInfo(Authentication authentication) {
         UserDto user = userService.getUserFromPrincipal((ApiUserDetails) authentication.getPrincipal());
@@ -48,7 +48,7 @@ public class UserController {
         return new ResponseEntity<>(userDto, HttpStatus.OK);
     }
 
-    @PutMapping
+    @PutMapping(path="/me")
     @SecurityRequirement(name = "BearerAuth")
     public ResponseEntity<UserDto> updateUser(
             Authentication authentication,

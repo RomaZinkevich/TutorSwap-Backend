@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping(path="/api/v1/connection-request")
+@RequestMapping(path="/api/v1/connection-requests")
 @RequiredArgsConstructor
 @Tag(name="Connection Request")
 public class ConnectionRequestController {

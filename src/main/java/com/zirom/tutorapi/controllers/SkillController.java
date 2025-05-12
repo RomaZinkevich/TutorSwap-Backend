@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping(path="/api/v1/skill")
+@RequestMapping(path="/api/v1/skills")
 @RequiredArgsConstructor
 @Tag(name="Skill")
 public class SkillController {
