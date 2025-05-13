@@ -1,15 +1,16 @@
 package com.zirom.tutorapi.services.impl;
 
+import com.zirom.tutorapi.domain.MessageType;
 import com.zirom.tutorapi.domain.dtos.connection.CreateConnectionRequest;
 import com.zirom.tutorapi.domain.dtos.user.UserDto;
+import com.zirom.tutorapi.domain.entities.Chat;
 import com.zirom.tutorapi.domain.entities.Connection;
 import com.zirom.tutorapi.domain.entities.ConnectionRequest;
 import com.zirom.tutorapi.domain.entities.User;
+import com.zirom.tutorapi.domain.entities.messages.BaseMessage;
 import com.zirom.tutorapi.mappers.UserMapper;
 import com.zirom.tutorapi.repositories.ConnectionRequestRepository;
-import com.zirom.tutorapi.services.ConnectionRequestService;
-import com.zirom.tutorapi.services.ConnectionService;
-import com.zirom.tutorapi.services.UserService;
+import com.zirom.tutorapi.services.*;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -26,6 +27,8 @@ public class ConnectionRequestServiceImpl implements ConnectionRequestService {
     private final UserMapper userMapper;
     private final UserService userService;
     private final ConnectionService connectionService;
+    private final ChatService chatService;
+    private final MessageService messageService;
 
     @Override
     public List<ConnectionRequest> getConnectionsByUser(UUID receiverId, boolean isAccepted) {
@@ -59,11 +62,23 @@ public class ConnectionRequestServiceImpl implements ConnectionRequestService {
         connectionRequest.setAccepted(true);
 
         Connection newConnection = new Connection();
-
         newConnection.setConnectionType(connectionRequest.getConnectionType());
         newConnection.setUser(connectionRequest.getSenderUser());
         newConnection.setPartnerUser(connectionRequest.getReceiverUser());
         connectionService.createConnection(newConnection);
+
+        Chat newChat = new Chat();
+        newChat.setSenderUser(connectionRequest.getSenderUser());
+        newChat.setReceiverUser(connectionRequest.getReceiverUser());
+        Chat chat = chatService.createChat(newChat);
+
+        BaseMessage newBaseMessage = new BaseMessage();
+        newBaseMessage.setSender(connectionRequest.getSenderUser());
+        newBaseMessage.setReceiver(connectionRequest.getReceiverUser());
+        newBaseMessage.setChat(chat);
+        newBaseMessage.setMessageType(MessageType.TEXT);
+        messageService.saveTextMessage(newBaseMessage, connectionRequest.getMessageContent());
+
         return connectionRequestRepository.save(connectionRequest);
     }
 }
