@@ -6,6 +6,9 @@ import com.zirom.tutorapi.services.ChatService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.UUID;
+
 @Service
 @RequiredArgsConstructor
 public class ChatServiceImpl implements ChatService {
@@ -15,5 +18,10 @@ public class ChatServiceImpl implements ChatService {
     @Override
     public Chat createChat(Chat chat) {
         return chatRepository.save(chat);
+    }
+
+    @Override
+    public List<Chat> getAllChatsByUserId(UUID userId) {
+        return chatRepository.findAllByReceiverUserIdOrSenderUserId(userId);
     }
 }

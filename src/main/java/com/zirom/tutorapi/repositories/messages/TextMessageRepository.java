@@ -1,4 +1,4 @@
-package com.zirom.tutorapi.repositories;
+package com.zirom.tutorapi.repositories.messages;
 
 import com.zirom.tutorapi.domain.entities.messages.TextMessage;
 import org.springframework.data.jpa.repository.JpaRepository;
