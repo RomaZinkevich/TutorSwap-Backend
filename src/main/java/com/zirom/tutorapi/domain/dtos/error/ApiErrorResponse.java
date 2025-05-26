@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
+import java.util.Map;
 
 @Data
 @Builder
@@ -15,14 +16,6 @@ public class ApiErrorResponse {
 
     private int status;
     private String message;
-    private List<String> errors;
+    private Map<String, String> errors;
 
-    @Data
-    @Builder
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class FieldError {
-        private String field;
-        private String message;
-    }
 }

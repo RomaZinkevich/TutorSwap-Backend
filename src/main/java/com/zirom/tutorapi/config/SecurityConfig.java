@@ -51,11 +51,14 @@ public class SecurityConfig {
                                 "/topic/**",
                                 "/app/**"
                         ).permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/v1/auth/google").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/v1/auth/google/signup").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/v1/skills/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/v1/skills").hasRole("ADMIN")
-                        .anyRequest().authenticated())
+                        .requestMatchers(HttpMethod.GET, "/api/v1/users/**").authenticated()
+                        .requestMatchers(HttpMethod.PUT, "/api/v1/users/**").authenticated()
+                        .requestMatchers(HttpMethod.GET, "/api/v1/connection-requests/**").authenticated()
+                        .requestMatchers(HttpMethod.POST, "/api/v1/connection-requests/**").authenticated()
+                        .requestMatchers(HttpMethod.PUT, "/api/v1/connection-requests/**").authenticated()
+                        .requestMatchers(HttpMethod.GET, "/api/v1/connections/**").authenticated()
+                        .anyRequest().permitAll())
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(Customizer.withDefaults())
                 .sessionManagement(session ->
