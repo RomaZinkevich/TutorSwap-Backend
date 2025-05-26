@@ -59,6 +59,15 @@ public class UserController {
         return new ResponseEntity<>(responseUserDto, HttpStatus.OK);
     }
 
+    @GetMapping()
+    @SecurityRequirement(name = "BearerAuth")
+    public ResponseEntity<List<UserDto>> getAllUsers(Authentication authentication) {
+        UserDto loggedInUser = userService.getUserFromPrincipal((ApiUserDetails) authentication.getPrincipal());
+        List<User> users = userService.getAllUsers();
+        List<UserDto> userDtos = users.stream().map(userMapper::toDto).collect(Collectors.toList());
+        return new ResponseEntity<>(userDtos, HttpStatus.OK);
+    }
+
     @GetMapping(path="/learn-to-teach")
     @SecurityRequirement(name = "BearerAuth")
     public ResponseEntity<List<UserDto>> getUsersLearnToTeach(Authentication authentication) {

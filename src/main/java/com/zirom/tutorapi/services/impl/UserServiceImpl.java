@@ -27,6 +27,11 @@ public class UserServiceImpl implements UserService {
     private final UserMapper userMapper;
 
     @Override
+    public List<User> getAllUsers() {
+        return userRepository.findAll();
+    }
+
+    @Override
     public Optional<User> findById(UUID id) {
         return userRepository.findById(id);
     }
