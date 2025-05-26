@@ -12,7 +12,7 @@ import java.util.UUID;
 
 public interface UserService {
 
-    List<User> getAllUsers();
+    List<User> getAllUsers(UUID userId);
     Optional<User> findById(UUID id);
 
     User save(User user);

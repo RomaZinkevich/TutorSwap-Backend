@@ -12,4 +12,6 @@ public interface UserRepository extends JpaRepository<User, UUID> {
     List<User> findAllBySkillToTeach(Skill skillToTeach);
 
     List<User> findAllBySkillToLearn(Skill skillToLearn);
+
+    List<User> findAllByIdIsNot(UUID id);
 }
