@@ -7,6 +7,7 @@ import com.zirom.tutorapi.domain.dtos.user.UserDto;
 import com.zirom.tutorapi.domain.entities.User;
 import com.zirom.tutorapi.mappers.UserMapper;
 import com.zirom.tutorapi.services.GoogleOAuthService;
+import com.zirom.tutorapi.services.JwtService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +24,7 @@ import java.util.Optional;
 public class GoogleAuthController {
 
     private final GoogleOAuthService googleOAuthService;
+    private final JwtService jwtService;
     private final UserMapper userMapper;
 
     @PostMapping()
@@ -32,7 +34,7 @@ public class GoogleAuthController {
         if (authenticateUser.isPresent()) {
             User user = authenticateUser.get();
             UserDto userDto = userMapper.toDto(user);
-            String token = googleOAuthService.generateToken(userDto);
+            String token = jwtService.generateToken(userDto);
             response.setMessage("User found");
             response.setNewUser(false);
             response.setToken(token);
@@ -49,7 +51,7 @@ public class GoogleAuthController {
     public ResponseEntity<String> registerUser(@RequestBody @Valid SignUpRequest request) {
         User newUser = googleOAuthService.signup(request);
         UserDto userDto = userMapper.toDto(newUser);
-        String token = googleOAuthService.generateToken(userDto);
+        String token = jwtService.generateToken(userDto);
         return new ResponseEntity<>(token, HttpStatus.CREATED);
     }
 }

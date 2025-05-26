@@ -28,7 +28,6 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -42,9 +41,7 @@ import java.util.*;
 @Service
 @RequiredArgsConstructor
 public class GoogleOAuthServiceImpl implements GoogleOAuthService {
-    private final UserMapper userMapper;
     private final ProviderService providerService;
-    private final UserDetailsService userDetailsService;
     @Value("${GOOGLE_CLIENT_ID}")
     private String clientId;
 
@@ -108,26 +105,6 @@ public class GoogleOAuthServiceImpl implements GoogleOAuthService {
 
     }
 
-    @Override
-    public String generateToken(UserDto userDto) {
-        Map<String, Object> claims = new HashMap<>();
-        claims.put("roles", List.of(userDto.getRole().name()));
-        return Jwts.builder()
-                .setClaims(claims)
-                .setSubject(String.valueOf(userDto.getId()))
-                .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + jwtExpiryMs))
-                .signWith(getSigningKey(), SignatureAlgorithm.HS256)
-                .compact();
-    }
-
-    @Override
-    @Transactional
-    public UserDetails validateToken(String token) {
-        String userId = extractId(token);
-        return userDetailsService.loadUserByUsername(userId);
-    }
-
     private GoogleUserInfo verifyAndParseIdToken(String idTokenString){
         try {
             GoogleIdToken idToken = verifier.verify(idTokenString);
@@ -177,19 +154,5 @@ public class GoogleOAuthServiceImpl implements GoogleOAuthService {
         userInfo.setSub(payload.getSubject());
 
         return userInfo;
-    }
-
-    private String extractId(String token) {
-        return Jwts.parserBuilder()
-                .setSigningKey(getSigningKey())
-                .build()
-                .parseClaimsJws(token)
-                .getBody()
-                .getSubject();
-    }
-
-    private Key getSigningKey() {
-        byte[] keyBytes = secretKey.getBytes();
-        return Keys.hmacShaKeyFor(keyBytes);
     }
 }

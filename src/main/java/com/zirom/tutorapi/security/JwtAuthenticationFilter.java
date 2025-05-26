@@ -1,6 +1,7 @@
 package com.zirom.tutorapi.security;
 
 import com.zirom.tutorapi.services.GoogleOAuthService;
+import com.zirom.tutorapi.services.JwtService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -20,7 +21,7 @@ import java.io.IOException;
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
-    private final GoogleOAuthService authenticationService;
+    private final JwtService authenticationService;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {

@@ -4,6 +4,7 @@ import com.zirom.tutorapi.repositories.UserRepository;
 import com.zirom.tutorapi.security.ApiUserDetailsService;
 import com.zirom.tutorapi.security.JwtAuthenticationFilter;
 import com.zirom.tutorapi.services.GoogleOAuthService;
+import com.zirom.tutorapi.services.JwtService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -28,8 +29,8 @@ import java.util.List;
 public class SecurityConfig {
 
     @Bean
-    public JwtAuthenticationFilter jwtAuthenticationFilter(GoogleOAuthService googleOAuthService) {
-        return new JwtAuthenticationFilter(googleOAuthService);
+    public JwtAuthenticationFilter jwtAuthenticationFilter(JwtService jwtService) {
+        return new JwtAuthenticationFilter(jwtService);
     }
 
     @Bean

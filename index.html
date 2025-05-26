@@ -2,36 +2,636 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>WebSocket STOMP Test</title>
     <script src="https://cdn.jsdelivr.net/npm/sockjs-client/dist/sockjs.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/stompjs/lib/stomp.min.js"></script>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(10px);
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #4a5568;
+            font-size: 2rem;
+        }
+
+        .controls {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        button {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        .connect-btn {
+            background: linear-gradient(45deg, #48bb78, #38a169);
+            color: white;
+        }
+
+        .connect-btn:disabled {
+            background: #a0aec0;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .disconnect-btn {
+            background: linear-gradient(45deg, #f56565, #e53e3e);
+            color: white;
+        }
+
+        .send-btn {
+            background: linear-gradient(45deg, #4299e1, #3182ce);
+            color: white;
+        }
+
+        .clear-btn {
+            background: linear-gradient(45deg, #ed8936, #dd6b20);
+            color: white;
+        }
+
+        .status {
+            padding: 10px 15px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        .status.connected {
+            background: #c6f6d5;
+            color: #22543d;
+            border: 2px solid #9ae6b4;
+        }
+
+        .status.disconnected {
+            background: #fed7d7;
+            color: #742a2a;
+            border: 2px solid #fc8181;
+        }
+
+        .auth-section {
+            margin-bottom: 20px;
+            padding: 15px;
+            background: #e6fffa;
+            border-radius: 8px;
+            border: 2px solid #81e6d9;
+        }
+
+        .jwt-field {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .jwt-field label {
+            font-weight: 600;
+            color: #234e52;
+            font-size: 14px;
+        }
+
+        textarea {
+            padding: 10px;
+            border: 2px solid #a0aec0;
+            border-radius: 6px;
+            font-size: 14px;
+            font-family: 'Courier New', monospace;
+            resize: vertical;
+            min-height: 60px;
+            transition: border-color 0.3s ease;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: #4299e1;
+            box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.1);
+        }
+
+        .user-selection {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: #edf2f7;
+            border-radius: 8px;
+            border: 2px solid #e2e8f0;
+            flex-wrap: wrap;
+        }
+
+        .user-field {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            min-width: 200px;
+        }
+
+        .user-selection label {
+            font-weight: 600;
+            color: #4a5568;
+            font-size: 14px;
+        }
+
+        select {
+            padding: 8px 12px;
+            border: 2px solid #e2e8f0;
+            border-radius: 6px;
+            font-size: 14px;
+            background: white;
+            color: #4a5568;
+            cursor: pointer;
+            transition: border-color 0.3s ease;
+        }
+
+        select:focus {
+            outline: none;
+            border-color: #4299e1;
+            box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.1);
+        }
+
+        .current-user {
+            background: #e6fffa;
+            color: #234e52;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .private-message {
+            background: #fef5e7;
+            border-left-color: #ed8936;
+        }
+
+        .broadcast-message {
+            background: #f0fff4;
+            border-left-color: #48bb78;
+        }
+
+        .message-input {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        input[type="text"] {
+            flex: 1;
+            padding: 12px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s ease;
+        }
+
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #4299e1;
+            box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.1);
+        }
+
+        .messages-container {
+            background: #f7fafc;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            height: 400px;
+            overflow-y: auto;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+
+        .message {
+            background: white;
+            padding: 12px 15px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            border-left: 4px solid #4299e1;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            animation: slideIn 0.3s ease;
+        }
+
+        .message:last-child {
+            margin-bottom: 0;
+        }
+
+        .message-time {
+            font-size: 12px;
+            color: #718096;
+            margin-bottom: 5px;
+        }
+
+        .message-content {
+            font-size: 14px;
+            line-height: 1.4;
+            word-wrap: break-word;
+        }
+
+        .system-message {
+            background: #edf2f7;
+            border-left-color: #718096;
+        }
+
+        .sent-message {
+            background: #e6fffa;
+            border-left-color: #38b2ac;
+        }
+
+        .received-message {
+            background: #f0fff4;
+            border-left-color: #48bb78;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .stats {
+            display: flex;
+            gap: 20px;
+            margin-top: 20px;
+            font-size: 14px;
+            color: #4a5568;
+        }
+
+        .stat {
+            background: #edf2f7;
+            padding: 8px 12px;
+            border-radius: 6px;
+        }
+
+        .debug-info {
+            margin-top: 20px;
+            padding: 15px;
+            background: #fff3cd;
+            border: 2px solid #ffeaa7;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        .debug-info h4 {
+            margin: 0 0 10px 0;
+            color: #856404;
+        }
+
+        .debug-info p {
+            margin: 5px 0;
+            color: #856404;
+        }
+
+        @media (max-width: 600px) {
+            .controls {
+                flex-direction: column;
+            }
+
+            button {
+                width: 100%;
+            }
+
+            .message-input {
+                flex-direction: column;
+            }
+        }
+    </style>
 </head>
 <body>
-<h2>STOMP WebSocket Test</h2>
-<button onclick="connect()">Connect</button>
-<button onclick="sendMessage()">Send Message</button>
+<div class="container">
+    <h2>🚀 WebSocket STOMP Tester</h2>
+
+    <div class="status disconnected" id="status">
+        Disconnected
+    </div>
+
+    <div class="controls">
+        <button class="connect-btn" onclick="connect()" id="connectBtn">Connect</button>
+        <button class="disconnect-btn" onclick="disconnect()" id="disconnectBtn" disabled>Disconnect</button>
+        <button class="clear-btn" onclick="clearMessages()">Clear Messages</button>
+    </div>
+
+    <div class="auth-section">
+        <div class="jwt-field">
+            <label for="jwtToken">JWT Token:</label>
+            <textarea id="jwtToken" placeholder="Paste your JWT token here..." rows="3"></textarea>
+        </div>
+    </div>
+
+    <div class="user-selection">
+        <div class="user-field">
+            <label for="receiverSelect">Send to (Receiver):</label>
+            <select id="receiverSelect">
+                <option value="">🌍 Everyone (Broadcast)</option>
+                <option value="Alice">👤 Alice</option>
+                <option value="Bob">👤 Bob</option>
+                <option value="Charlie">👤 Charlie</option>
+                <option value="Diana">👤 Diana</option>
+                <option value="Eve">👤 Eve</option>
+                <option value="Frank">👤 Frank</option>
+                <option value="Grace">👤 Grace</option>
+                <option value="Henry">👤 Henry</option>
+                <option value="Ivy">👤 Ivy</option>
+                <option value="Jack">👤 Jack</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="user-selection2">
+        <div class="user-field2">
+            <label for="receiverSelect2">Send as (Receiver):</label>
+            <select id="receiverSelect2">
+                <option value="Alice">👤 Alice</option>
+                <option value="Bob">👤 Bob</option>
+                <option value="Charlie">👤 Charlie</option>
+                <option value="Diana">👤 Diana</option>
+                <option value="Eve">👤 Eve</option>
+                <option value="Frank">👤 Frank</option>
+                <option value="Grace">👤 Grace</option>
+                <option value="Henry">👤 Henry</option>
+                <option value="Ivy">👤 Ivy</option>
+                <option value="Jack">👤 Jack</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="message-input">
+        <input type="text" id="messageInput" placeholder="Enter your message here..." onkeypress="handleKeyPress(event)">
+        <button class="send-btn" onclick="sendMessage()" id="sendBtn" disabled>Send Message</button>
+    </div>
+
+    <div class="messages-container" id="messagesContainer">
+        <div class="message system-message">
+            <div class="message-time">System</div>
+            <div class="message-content">Welcome! Click Connect to start testing your WebSocket connection.</div>
+        </div>
+    </div>
+
+    <div class="stats">
+        <div class="stat">Messages Sent: <span id="sentCount">0</span></div>
+        <div class="stat">Messages Received: <span id="receivedCount">0</span></div>
+        <div class="stat">Connection Time: <span id="connectionTime">--</span></div>
+        <div class="stat">Client ID: <span id="clientId">--</span></div>
+    </div>
+
+    <div class="debug-info">
+        <h4>🔧 Debug Info:</h4>
+        <p><strong>Authentication:</strong> JWT token is sent in connection headers as <code>Authorization: Bearer {token}</code></p>
+        <p><strong>Broadcast Messages:</strong> Send to "Everyone" - should appear in all connected clients</p>
+        <p><strong>Private Messages:</strong> Send to specific user - should only appear for that recipient</p>
+        <p><strong>Sender Identity:</strong> Server determines sender from JWT token (no manual sender selection)</p>
+        <p><strong>Testing tip:</strong> Use different JWT tokens in multiple tabs to test different authenticated users</p>
+    </div>
+</div>
 
 <script>
     let stompClient = null;
+    let isConnected = false;
+    let sentCount = 0;
+    let receivedCount = 0;
+    let connectionStartTime = null;
+    let clientId = Math.random().toString(36).substr(2, 9); // Generate unique client ID
+
+    // Display client ID
+    document.getElementById('clientId').textContent = clientId;
+
+    function updateStatus(connected) {
+        const statusEl = document.getElementById('status');
+        const connectBtn = document.getElementById('connectBtn');
+        const disconnectBtn = document.getElementById('disconnectBtn');
+        const sendBtn = document.getElementById('sendBtn');
+
+        if (connected) {
+            statusEl.textContent = 'Connected ✓';
+            statusEl.className = 'status connected';
+            connectBtn.disabled = true;
+            disconnectBtn.disabled = false;
+            sendBtn.disabled = false;
+            connectionStartTime = new Date();
+            updateConnectionTime();
+        } else {
+            statusEl.textContent = 'Disconnected';
+            statusEl.className = 'status disconnected';
+            connectBtn.disabled = false;
+            disconnectBtn.disabled = true;
+            sendBtn.disabled = true;
+            connectionStartTime = null;
+            document.getElementById('connectionTime').textContent = '--';
+        }
+        isConnected = connected;
+    }
+
+    function updateConnectionTime() {
+        if (connectionStartTime) {
+            const elapsed = Math.floor((new Date() - connectionStartTime) / 1000);
+            const minutes = Math.floor(elapsed / 60);
+            const seconds = elapsed % 60;
+            document.getElementById('connectionTime').textContent =
+                `${minutes}:${seconds.toString().padStart(2, '0')}`;
+
+            if (isConnected) {
+                setTimeout(updateConnectionTime, 1000);
+            }
+        }
+    }
+
+    function addMessage(content, type = 'system', from = null, to = null) {
+        const messagesContainer = document.getElementById('messagesContainer');
+        const messageEl = document.createElement('div');
+
+        // Determine message class based on type and recipient
+        let messageClass = `message ${type}-message`;
+        if (type !== 'system' && to) {
+            messageClass += ' private-message';
+        } else if (type !== 'system') {
+            messageClass += ' broadcast-message';
+        }
+
+        messageEl.className = messageClass;
+
+        const now = new Date();
+        const timeStr = now.toLocaleTimeString();
+
+        let headerText = timeStr;
+        if (from && type !== 'system') {
+            if (to) {
+                headerText = `${from} → ${to} - ${timeStr}`;
+            } else {
+                headerText = `${from} → Everyone - ${timeStr}`;
+            }
+        }
+
+        // Add visual indicator for message type
+        let messagePrefix = '';
+        if (type !== 'system' && to) {
+            messagePrefix = '🔒 ';
+        } else if (type !== 'system') {
+            messagePrefix = '📢 ';
+        }
+
+        messageEl.innerHTML = `
+                <div class="message-time">${headerText}</div>
+                <div class="message-content">${messagePrefix}${content}</div>
+            `;
+
+        messagesContainer.appendChild(messageEl);
+        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    }
 
     function connect() {
-        const socket = new SockJS('http://localhost:8080/ws');
-        stompClient = Stomp.over(socket);
+        const user = document.getElementById('receiverSelect2');
+        const jwtToken = document.getElementById('jwtToken').value.trim();
 
-        stompClient.connect({}, function (frame) {
-            console.log('Connected: ' + frame);
+        if (!jwtToken) {
+            addMessage('Please enter a JWT token before connecting.', 'system');
+            return;
+        }
 
-            stompClient.subscribe('/topic/public', function (message) {
-                console.log('Received: ' + message.body);
-                alert('Message: ' + message.body);
+        try {
+            addMessage('Attempting to connect to WebSocket with JWT authentication...', 'system');
+
+            const socket = new SockJS(`http://localhost:8080/ws?token=${jwtToken}`);
+            stompClient = Stomp.over(socket);
+
+            // Disable debug logging for cleaner output
+            stompClient.debug = null;
+
+
+
+            stompClient.connect({}, function (frame) {
+                console.log('Connected: ' + frame);
+                updateStatus(true);
+                addMessage('Successfully connected to WebSocket server with JWT authentication!', 'system');
+
+                stompClient.subscribe('/topic/private.'+user.value, function (message) {
+                    console.log('Received: ' + message.body);
+                    receivedCount++;
+                    document.getElementById('receivedCount').textContent = receivedCount;
+
+                    try {
+                        const parsedMessage = JSON.parse(message.body);
+                        // Handle both 'sender' and 'from' fields for compatibility
+                        const fromUser = parsedMessage.sender || parsedMessage.from || 'Unknown';
+                        const toUser = parsedMessage.receiver || parsedMessage.to || null;
+                        const content = parsedMessage.content || message.body;
+                        const messageType = parsedMessage.type || 'TEXT';
+
+                        // Display message type if it's not a regular chat message
+                        const displayContent = messageType !== 'TEXT' ?
+                            `[${messageType}] ${content}` : content;
+
+                        addMessage(displayContent, 'received', fromUser, toUser);
+                    } catch (e) {
+                        addMessage(message.body, 'received');
+                    }
+                });
+            }, function (error) {
+                console.error('Connection error:', error);
+                updateStatus(false);
+                addMessage(`Connection failed: ${error}. Please check your JWT token and try again.`, 'system');
             });
-        });
+        } catch (error) {
+            console.error('Connect error:', error);
+            addMessage(`Connection error: ${error.message}`, 'system');
+        }
+    }
+
+    function disconnect() {
+        if (stompClient !== null) {
+            stompClient.disconnect(function() {
+                updateStatus(false);
+                addMessage('Disconnected from WebSocket server.', 'system');
+            });
+        }
     }
 
     function sendMessage() {
-        const payload = { content: "Hello from manual test!" };
-        stompClient.send("/app/chat.sendMessage", {}, JSON.stringify(payload));
+        const messageInput = document.getElementById('messageInput');
+        const message = messageInput.value.trim();
+
+        if (!message) {
+            addMessage('Please enter a message to send.', 'system');
+            return;
+        }
+
+        if (stompClient && isConnected) {
+            try {
+                const payload = {
+                    content: message,
+                    receiver: document.getElementById('receiverSelect').value,
+                    type: "TEXT"
+                };
+
+                stompClient.send("/app/chat.sendMessage", {}, JSON.stringify(payload));
+                sentCount++;
+                document.getElementById('sentCount').textContent = sentCount;
+                addMessage(message, 'sent');
+                messageInput.value = '';
+            } catch (error) {
+                console.error('Send error:', error);
+                addMessage(`Send error: ${error.message}`, 'system');
+            }
+        } else {
+            addMessage('Not connected. Please connect first.', 'system');
+        }
     }
+
+    function clearMessages() {
+        const messagesContainer = document.getElementById('messagesContainer');
+        messagesContainer.innerHTML = `
+                <div class="message system-message">
+                    <div class="message-time">System</div>
+                    <div class="message-content">Messages cleared.</div>
+                </div>
+            `;
+        sentCount = 0;
+        receivedCount = 0;
+        document.getElementById('sentCount').textContent = '0';
+        document.getElementById('receivedCount').textContent = '0';
+    }
+
+    function handleKeyPress(event) {
+        if (event.key === 'Enter') {
+            sendMessage();
+        }
+    }
+
+    // Initialize the interface
+    updateStatus(false);
 </script>
 </body>
 </html>

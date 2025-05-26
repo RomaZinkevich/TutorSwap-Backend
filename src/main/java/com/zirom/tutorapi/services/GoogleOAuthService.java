@@ -12,8 +12,4 @@ public interface GoogleOAuthService {
     Optional<User> googleAuthenticate(String idToken);
 
     User signup(SignUpRequest dto);
-
-    String generateToken(UserDto userDto);
-
-    UserDetails validateToken(String token);
 }
