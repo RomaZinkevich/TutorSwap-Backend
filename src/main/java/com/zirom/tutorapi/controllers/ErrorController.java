@@ -63,11 +63,25 @@ public class ErrorController {
 
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ResponseEntity<ApiErrorResponse> handleDataIntegrityViolation(DataIntegrityViolationException ex) {
-        String rootMessage = ex.getRootCause() != null ? ex.getRootCause().getMessage() : ex.getMessage();
+        String rootMessage = ex.getRootCause() != null ? ex.getRootCause().getMessage() : "";
+
+        // Default message
+        String userMessage = "A database constraint was violated.";
+
+        // Match known constraint names or error fragments
+        if (rootMessage.contains("unique_email")) {
+            userMessage = "This email is already registered.";
+        } else if (rootMessage.contains("unique_username")) {
+            userMessage = "This username is already taken.";
+        } else if (rootMessage.contains("foreign key")) {
+            userMessage = "An associated entity does not exist.";
+        } else if (rootMessage.contains("duplicate key")) {
+            userMessage = "Duplicate data not allowed.";
+        }
 
         ApiErrorResponse error = ApiErrorResponse.builder()
                 .status(HttpStatus.CONFLICT.value())
-                .message("Database constraint violated: " + rootMessage)
+                .message(userMessage)
                 .build();
 
         return new ResponseEntity<>(error, HttpStatus.CONFLICT);
