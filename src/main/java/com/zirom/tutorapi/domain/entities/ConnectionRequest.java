@@ -17,6 +17,7 @@ import java.util.UUID;
 @Getter
 @Setter
 @Builder
+@org.hibernate.annotations.Check(constraints = "sender_id <> receiver_id")
 public class ConnectionRequest {
 
     @Id
