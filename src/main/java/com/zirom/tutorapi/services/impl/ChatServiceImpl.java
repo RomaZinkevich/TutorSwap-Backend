@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -23,5 +24,10 @@ public class ChatServiceImpl implements ChatService {
     @Override
     public List<Chat> getAllChatsByUserId(UUID userId) {
         return chatRepository.findAllByReceiverUserIdOrSenderUserId(userId);
+    }
+
+    @Override
+    public Optional<Chat> getChatById(UUID chatId) {
+        return chatRepository.findById(chatId);
     }
 }
