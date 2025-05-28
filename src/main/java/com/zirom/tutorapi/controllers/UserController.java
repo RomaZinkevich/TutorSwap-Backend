@@ -1,6 +1,7 @@
 package com.zirom.tutorapi.controllers;
 
 import com.zirom.tutorapi.domain.dtos.user.UpdateUserRequest;
+import com.zirom.tutorapi.domain.dtos.user.UserConnectionDto;
 import com.zirom.tutorapi.domain.dtos.user.UserDto;
 import com.zirom.tutorapi.domain.entities.Skill;
 import com.zirom.tutorapi.domain.entities.User;
@@ -41,10 +42,13 @@ public class UserController {
 
     @GetMapping(path="/{id}")
     @SecurityRequirement(name = "BearerAuth")
-    public ResponseEntity<UserDto> getUserInfoById(@PathVariable UUID id) {
-        User user = userService.findById(id).orElseThrow(() -> new EntityNotFoundException("User not found with id: " + id));
-        UserDto userDto = userMapper.toDto(user);
-        return new ResponseEntity<>(userDto, HttpStatus.OK);
+    public ResponseEntity<UserConnectionDto> getUserInfoById(
+            @PathVariable UUID id,
+            Authentication authentication
+    ) {
+        UserDto currentUser = userService.getUserFromPrincipal((ApiUserDetails) authentication.getPrincipal());
+        UserConnectionDto user = userService.findByIdWithConnection(id, currentUser.getId()).orElseThrow(() -> new EntityNotFoundException("User not found with id: " + id));
+        return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
     @PutMapping(path="/me")

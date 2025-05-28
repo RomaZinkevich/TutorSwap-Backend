@@ -1,0 +1,31 @@
+package com.zirom.tutorapi.domain.dtos.user;
+
+import com.zirom.tutorapi.domain.ConnectionType;
+import com.zirom.tutorapi.domain.Role;
+import com.zirom.tutorapi.domain.dtos.skill.SkillDto;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.util.UUID;
+
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
+public class UserConnectionDto {
+    private UUID id;
+    private String name;
+    private String email;
+    private String profileImage;
+    private String description;
+    private String universityName;
+    private SkillDto skillToLearn;
+    private SkillDto skillToTeach;
+    private String wantToLearnDetail;
+    private String wantToTeachDetail;
+    private boolean accepted;
+    private ConnectionType connectionType;
+    private boolean isSender;
+}
