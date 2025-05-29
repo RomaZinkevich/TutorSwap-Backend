@@ -48,8 +48,6 @@ public class UserServiceImpl implements UserService {
     public Optional<UserConnectionDto> findByIdWithConnection(UUID targetUserId, UUID currentUserId) {
         User targetUser = userRepository.findById(targetUserId).orElseThrow(() -> new EntityNotFoundException("User not found"));
         Optional<ConnectionRequest> connectionBetween = connectionRequestRepository.findConnectionBetween(currentUserId, targetUserId);
-        Skill skillToLearn = targetUser.getSkillToLearn();
-        Skill skillToTeach = targetUser.getSkillToTeach();
         UserConnectionDto userConnectionDto = new UserConnectionDto();
         userConnectionDto.setId(targetUserId);
         userConnectionDto.setName(targetUser.getName());
