@@ -46,6 +46,7 @@ public class UserController {
             @PathVariable UUID id,
             Authentication authentication
     ) {
+        System.out.println(id);
         UserDto currentUser = userService.getUserFromPrincipal((ApiUserDetails) authentication.getPrincipal());
         UserConnectionDto user = userService.findByIdWithConnection(id, currentUser.getId()).orElseThrow(() -> new EntityNotFoundException("User not found with id: " + id));
         return new ResponseEntity<>(user, HttpStatus.OK);
