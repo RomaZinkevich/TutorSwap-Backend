@@ -25,6 +25,7 @@ public class UserConnectionDto {
     private SkillDto skillToTeach;
     private String wantToLearnDetail;
     private String wantToTeachDetail;
+    private boolean connectionExists;
     private boolean accepted;
     private ConnectionType connectionType;
     private boolean isSender;

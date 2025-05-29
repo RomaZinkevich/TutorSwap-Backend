@@ -4,10 +4,12 @@ import com.zirom.tutorapi.domain.ConnectionType;
 import com.zirom.tutorapi.domain.dtos.user.UpdateUserRequest;
 import com.zirom.tutorapi.domain.dtos.user.UserConnectionDto;
 import com.zirom.tutorapi.domain.dtos.user.UserDto;
+import com.zirom.tutorapi.domain.entities.ConnectionRequest;
 import com.zirom.tutorapi.domain.entities.Skill;
 import com.zirom.tutorapi.domain.entities.User;
 import com.zirom.tutorapi.mappers.SkillMapper;
 import com.zirom.tutorapi.mappers.UserMapper;
+import com.zirom.tutorapi.repositories.ConnectionRequestRepository;
 import com.zirom.tutorapi.repositories.UserRepository;
 import com.zirom.tutorapi.security.ApiUserDetails;
 import com.zirom.tutorapi.services.SkillService;
@@ -30,6 +32,7 @@ public class UserServiceImpl implements UserService {
     private final SkillService skillService;
     private final UserMapper userMapper;
     private final SkillMapper skillMapper;
+    private final ConnectionRequestRepository connectionRequestRepository;
 
     @Override
     public List<User> getAllUsers(UUID userId) {
@@ -43,28 +46,32 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Optional<UserConnectionDto> findByIdWithConnection(UUID targetUserId, UUID currentUserId) {
-        Map<String, Object> result = userRepository.rawUserConnection(currentUserId, targetUserId);
-        System.out.println(result.get("id"));
-        System.out.println(targetUserId);
-        System.out.println(currentUserId);
+        User targetUser = userRepository.findById(targetUserId).orElseThrow(() -> new EntityNotFoundException("User not found"));
+        Optional<ConnectionRequest> connectionBetween = connectionRequestRepository.findConnectionBetween(currentUserId, targetUserId);
+        Skill skillToLearn = targetUser.getSkillToLearn();
+        Skill skillToTeach = targetUser.getSkillToTeach();
+        UserConnectionDto userConnectionDto = new UserConnectionDto();
+        userConnectionDto.setId(targetUserId);
+        userConnectionDto.setName(targetUser.getName());
+        userConnectionDto.setEmail(targetUser.getEmail());
+        userConnectionDto.setProfileImage(targetUser.getProfileImage());
+        userConnectionDto.setDescription(targetUser.getDescription());
+        userConnectionDto.setUniversityName(targetUser.getUniversityName());
+        userConnectionDto.setWantToLearnDetail(targetUser.getWantToLearnDetail());
+        userConnectionDto.setWantToTeachDetail(targetUser.getWantToTeachDetail());
+        userConnectionDto.setSkillToLearn(skillMapper.toDto(targetUser.getSkillToLearn()));
+        userConnectionDto.setSkillToTeach(skillMapper.toDto(targetUser.getSkillToTeach()));
 
-        Skill skillToLearn = skillService.findById((UUID) result.get("skill_to_learn_id"));
-        Skill skillToTeach = skillService.findById((UUID) result.get("skill_to_teach_id"));
-        return Optional.ofNullable(UserConnectionDto.builder()
-                .id((UUID) result.get("id"))
-                .name((String) result.get("name"))
-                .email((String) result.get("email"))
-                .profileImage((String) result.get("profile_image"))
-                .description((String) result.get("description"))
-                .universityName((String) result.get("university_name"))
-                .wantToLearnDetail((String) result.get("want_to_learn_detail"))
-                .wantToTeachDetail((String) result.get("want_to_teach_detail"))
-                .accepted(result.get("accepted") != null && (boolean) result.get("accepted"))
-                .connectionType(result.get("connection_type") != null ? ConnectionType.valueOf(result.get("connection_type").toString()) : null)
-                .isSender(result.get("is_sender") != null && (boolean) result.get("is_sender"))
-                .skillToLearn(skillMapper.toDto(skillToLearn))
-                .skillToTeach(skillMapper.toDto(skillToTeach))
-                .build());
+        if (connectionBetween.isPresent()) {
+            ConnectionRequest connectionRequest = connectionBetween.get();
+            userConnectionDto.setAccepted(connectionRequest.isAccepted());
+            userConnectionDto.setConnectionType(connectionRequest.getConnectionType());
+            userConnectionDto.setSender(connectionRequest.getSenderUser().getId() == targetUserId);
+            userConnectionDto.setConnectionExists(true);
+        } else {
+            userConnectionDto.setConnectionExists(false);
+        }
+        return Optional.of(userConnectionDto);
     }
 
     @Override
