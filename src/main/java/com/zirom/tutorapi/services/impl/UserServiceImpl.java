@@ -43,7 +43,10 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Optional<UserConnectionDto> findByIdWithConnection(UUID targetUserId, UUID currentUserId) {
-        Map<String, Object> result = userRepository.rawUserConnection(currentUserId, targetUserId);
+        Map<String, Object> result = userRepository.rawUserConnection(currentUserId, ta.rgetUserId);
+        System.out.println(result.get("id"));
+        System.out.println(targetUserId);
+        System.out.println(currentUserId);
 
         Skill skillToLearn = skillService.findById((UUID) result.get("skill_to_learn_id"));
         Skill skillToTeach = skillService.findById((UUID) result.get("skill_to_teach_id"));
