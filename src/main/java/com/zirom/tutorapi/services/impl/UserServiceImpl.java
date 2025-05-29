@@ -67,9 +67,9 @@ public class UserServiceImpl implements UserService {
             userConnectionDto.setAccepted(connectionRequest.isAccepted());
             userConnectionDto.setConnectionType(connectionRequest.getConnectionType());
             userConnectionDto.setSender(connectionRequest.getSenderUser().getId() == targetUserId);
-            userConnectionDto.setConnectionExists(true);
+            userConnectionDto.setConnectionRequestExists(true);
         } else {
-            userConnectionDto.setConnectionExists(false);
+            userConnectionDto.setConnectionRequestExists(false);
         }
         return Optional.of(userConnectionDto);
     }
