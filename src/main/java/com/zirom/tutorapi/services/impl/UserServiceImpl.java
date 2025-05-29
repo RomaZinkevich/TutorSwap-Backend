@@ -43,7 +43,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Optional<UserConnectionDto> findByIdWithConnection(UUID targetUserId, UUID currentUserId) {
-        Map<String, Object> result = userRepository.rawUserConnection(currentUserId, ta.rgetUserId);
+        Map<String, Object> result = userRepository.rawUserConnection(currentUserId, targetUserId);
         System.out.println(result.get("id"));
         System.out.println(targetUserId);
         System.out.println(currentUserId);
