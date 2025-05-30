@@ -68,7 +68,7 @@ public class UserController {
     @SecurityRequirement(name = "BearerAuth")
     public ResponseEntity<List<UserDto>> getAllUsers(Authentication authentication) {
         UserDto loggedInUser = userService.getUserFromPrincipal((ApiUserDetails) authentication.getPrincipal());
-        List<User> users = userService.getAllUsers(loggedInUser.getId());
+        List<User> users = userService.getAllUsersExceptConnected(loggedInUser.getId());
         List<UserDto> userDtos = users.stream().map(userMapper::toDto).collect(Collectors.toList());
         return new ResponseEntity<>(userDtos, HttpStatus.OK);
     }

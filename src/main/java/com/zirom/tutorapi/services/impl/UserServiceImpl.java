@@ -33,6 +33,11 @@ public class UserServiceImpl implements UserService {
     private final ConnectionRequestRepository connectionRequestRepository;
 
     @Override
+    public List<User> getAllUsersExceptConnected(UUID userId) {
+        return userRepository.findAllExceptConnected(userId);
+    }
+
+    @Override
     public List<User> getAllUsers(UUID userId) {
         return userRepository.findAllByIdIsNot(userId);
     }

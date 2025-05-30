@@ -6,12 +6,16 @@ import lombok.*;
 import java.util.UUID;
 
 @Entity
-@Table(name="connections")
+@Table(
+        name="connections",
+        uniqueConstraints = @UniqueConstraint(columnNames = {"user_id", "partner_id"})
+)
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
 @Builder
+@org.hibernate.annotations.Check(constraints = "partner_id <> user_id")
 public class Connection {
 
     @Id

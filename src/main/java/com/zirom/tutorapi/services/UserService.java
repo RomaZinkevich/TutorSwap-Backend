@@ -14,6 +14,7 @@ import java.util.UUID;
 public interface UserService {
 
     List<User> getAllUsers(UUID userId);
+    List<User> getAllUsersExceptConnected(UUID userId);
     Optional<User> findById(UUID id);
     Optional<UserConnectionDto> findByIdWithConnection(UUID targetUserId, UUID currentUserId);
 

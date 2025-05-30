@@ -3,8 +3,8 @@ package com.zirom.tutorapi.repositories;
 import com.zirom.tutorapi.domain.dtos.user.UserConnectionDto;
 import com.zirom.tutorapi.domain.entities.Skill;
 import com.zirom.tutorapi.domain.entities.User;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
@@ -19,4 +19,20 @@ public interface UserRepository extends JpaRepository<User, UUID> {
     List<User> findAllBySkillToLearn(Skill skillToLearn);
 
     List<User> findAllByIdIsNot(UUID id);
+
+    @Query(
+            """
+    SELECT u
+    FROM User u
+    WHERE u.id != :loggedInUserId
+    AND NOT EXISTS (
+        SELECT 1
+        FROM Connection c
+        WHERE
+           (c.user.id = u.id AND c.partnerUser.id = :loggedInUserId)
+           OR (c.partnerUser.id = u.id AND c.user.id = :loggedInUserId)
+    )
+    """
+        )
+    List<User> findAllExceptConnected(UUID loggedInUserId);
 }
