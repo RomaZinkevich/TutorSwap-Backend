@@ -28,7 +28,6 @@ public abstract class MessageDto {
     private UUID id;
     private UserDto sender;
     private UserDto receiver;
-    private ChatDto chat;
     private MessageType messageType;
     private LocalDateTime timestamp;
 }

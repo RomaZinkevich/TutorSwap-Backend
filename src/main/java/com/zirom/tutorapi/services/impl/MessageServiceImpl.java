@@ -34,6 +34,11 @@ public class MessageServiceImpl implements MessageService {
     }
 
     @Override
+    public BaseMessage getLastMessageByChatId(UUID chatId) {
+        return baseMessageRepository.findBaseMessageByChat_IdOrderByTimestampDesc(chatId);
+    }
+
+    @Override
     @Transactional
     public BaseMessage saveTextMessage(TextMessageRequest messageRequest, UUID senderId) {
         User sender = userService.findById(senderId).orElseThrow(EntityNotFoundException::new);

@@ -41,8 +41,7 @@ public class ChatRestController {
     @SecurityRequirement(name = "BearerAuth")
     public ResponseEntity<List<ChatDto>> getChats(Authentication authentication) {
         UserDto user = userService.getUserFromPrincipal((ApiUserDetails) authentication.getPrincipal());
-        List<Chat> chats = chatService.getAllChatsByUserId(user.getId());
-        List<ChatDto> chatDtos = chats.stream().map(chatMapper::toDto).toList();
+        List<ChatDto> chatDtos = chatService.getAllChatsByUserId(user.getId());
         return new ResponseEntity<>(chatDtos, HttpStatus.OK);
     }
 

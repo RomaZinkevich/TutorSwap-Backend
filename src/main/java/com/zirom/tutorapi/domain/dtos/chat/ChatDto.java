@@ -1,5 +1,6 @@
 package com.zirom.tutorapi.domain.dtos.chat;
 
+import com.zirom.tutorapi.domain.dtos.chat.messages.MessageDto;
 import com.zirom.tutorapi.domain.dtos.user.UserDto;
 import lombok.*;
 
@@ -14,4 +15,6 @@ public class ChatDto {
     private UUID id;
     private UserDto senderUser;
     private UserDto receiverUser;
+    private MessageDto lastMessage;
+    private boolean isLearner;
 }

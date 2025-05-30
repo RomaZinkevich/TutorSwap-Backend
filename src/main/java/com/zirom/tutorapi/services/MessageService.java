@@ -12,4 +12,5 @@ public interface MessageService {
 
     List<BaseMessage> getAllMessagesByChatAndUserIds(UUID userId, UUID chatId);
     BaseMessage saveTextMessage(TextMessageRequest messageRequest, UUID senderId);
+    BaseMessage getLastMessageByChatId(UUID chatId);
 }

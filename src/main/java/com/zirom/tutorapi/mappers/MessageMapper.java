@@ -34,7 +34,6 @@ public class MessageMapper {
                 textDto.setId(message.getId());
                 textDto.setSender(userMapper.toDto(message.getSender()));
                 textDto.setReceiver(userMapper.toDto(message.getReceiver()));
-                textDto.setChat(chatMapper.toDto(message.getChat()));
                 textDto.setMessageType(message.getMessageType());
                 textDto.setTimestamp(message.getTimestamp());
 
@@ -51,7 +50,6 @@ public class MessageMapper {
                 imgDto.setId(message.getId());
                 imgDto.setSender(userMapper.toDto(message.getSender()));
                 imgDto.setReceiver(userMapper.toDto(message.getReceiver()));
-                imgDto.setChat(chatMapper.toDto(message.getChat()));
                 imgDto.setMessageType(message.getMessageType());
                 imgDto.setTimestamp(message.getTimestamp());
 
@@ -69,7 +67,6 @@ public class MessageMapper {
                 vidDto.setId(message.getId());
                 vidDto.setSender(userMapper.toDto(message.getSender()));
                 vidDto.setReceiver(userMapper.toDto(message.getReceiver()));
-                vidDto.setChat(chatMapper.toDto(message.getChat()));
                 vidDto.setMessageType(message.getMessageType());
                 vidDto.setTimestamp(message.getTimestamp());
 

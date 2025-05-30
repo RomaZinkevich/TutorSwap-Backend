@@ -10,4 +10,6 @@ import java.util.UUID;
 public interface BaseMessageRepository extends JpaRepository<BaseMessage, UUID> {
     @Query("SELECT m FROM BaseMessage m WHERE (m.sender.id = :userId OR m.receiver.id = :userId) AND m.chat.id = :chatId")
     List<BaseMessage> findAllMessagesByChatIdAndSenderOrReceiverIds(UUID userId, UUID chatId);
+
+    BaseMessage findBaseMessageByChat_IdOrderByTimestampDesc(UUID chatId);
 }
