@@ -1,7 +1,7 @@
 package com.zirom.tutorapi.services.impl;
 
+import com.zirom.tutorapi.domain.ConnectionRequestState;
 import com.zirom.tutorapi.domain.MessageType;
-import com.zirom.tutorapi.domain.dtos.chat.messages.requests.MessageRequest;
 import com.zirom.tutorapi.domain.dtos.chat.messages.requests.TextMessageRequest;
 import com.zirom.tutorapi.domain.dtos.connection.CreateConnectionRequest;
 import com.zirom.tutorapi.domain.dtos.user.UserDto;
@@ -9,12 +9,12 @@ import com.zirom.tutorapi.domain.entities.Chat;
 import com.zirom.tutorapi.domain.entities.Connection;
 import com.zirom.tutorapi.domain.entities.ConnectionRequest;
 import com.zirom.tutorapi.domain.entities.User;
-import com.zirom.tutorapi.domain.entities.messages.BaseMessage;
 import com.zirom.tutorapi.mappers.UserMapper;
 import com.zirom.tutorapi.repositories.ConnectionRequestRepository;
 import com.zirom.tutorapi.services.*;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -33,8 +33,8 @@ public class ConnectionRequestServiceImpl implements ConnectionRequestService {
     private final MessageService messageService;
 
     @Override
-    public List<ConnectionRequest> getConnectionsByUser(UUID receiverId, boolean isAccepted) {
-        return connectionRequestRepository.findConnectionRequestsByReceiverUser_IdAndAccepted(receiverId, isAccepted);
+    public List<ConnectionRequest> getConnectionsByUser(UUID receiverId, ConnectionRequestState state) {
+        return connectionRequestRepository.findConnectionRequestsByReceiverUser_IdAndRequestState(receiverId, state);
     }
 
     @Override
@@ -43,28 +43,37 @@ public class ConnectionRequestServiceImpl implements ConnectionRequestService {
         ConnectionRequest newConnectionRequest = new ConnectionRequest();
 
         User loggedinUser = userMapper.toEntity(loggedinUserDto);
-        newConnectionRequest.setSenderUser(loggedinUser);
-
         UUID receiverId = createConnectionRequest.getReceiverId();
         User receiverUser = userService.findById(receiverId).orElseThrow(() -> new EntityNotFoundException("User not found with id: " + receiverId));;
+        boolean exists = connectionRequestRepository.existsBySenderUserAndReceiverUser(loggedinUser, receiverUser) ||
+                connectionRequestRepository.existsBySenderUserAndReceiverUser(receiverUser, loggedinUser);
+        if (exists) {
+            throw new IllegalStateException("A connection already exists between those two users");
+        }
+
+        newConnectionRequest.setSenderUser(loggedinUser);
         newConnectionRequest.setReceiverUser(receiverUser);
 
         newConnectionRequest.setMessageContent(createConnectionRequest.getMessage());
-        newConnectionRequest.setConnectionType(createConnectionRequest.getConnectionType());
 
         return connectionRequestRepository.save(newConnectionRequest);
     }
 
     @Override
     @Transactional
-    public ConnectionRequest updateAccepted(UUID id, UserDto loggedinUserDto) {
-        ConnectionRequest connectionRequest = connectionRequestRepository.findConnectionRequestByIdAndReceiverUser_Id(
-                id, loggedinUserDto.getId()
-        ).orElseThrow(() -> new EntityNotFoundException("Connection request with matching id and receiver's id not found"));
-        connectionRequest.setAccepted(true);
+    public ConnectionRequest updateConnectionRequest(UUID id, UserDto loggedinUserDto, boolean isAccepted) {
+        ConnectionRequest connectionRequest = connectionRequestRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Entity not found"));
+        if (!connectionRequest.getReceiverUser().getId().equals(loggedinUserDto.getId())) {
+            throw new AccessDeniedException("No rights to access this Connection Request");
+        }
+
+        if (!isAccepted) {
+            connectionRequest.setRequestState(ConnectionRequestState.REJECTED);
+            return connectionRequestRepository.save(connectionRequest);
+        }
+        connectionRequest.setRequestState(ConnectionRequestState.ACCEPTED);
 
         Connection newConnection = new Connection();
-        newConnection.setConnectionType(connectionRequest.getConnectionType());
         newConnection.setUser(connectionRequest.getSenderUser());
         newConnection.setPartnerUser(connectionRequest.getReceiverUser());
         connectionService.createConnection(newConnection);

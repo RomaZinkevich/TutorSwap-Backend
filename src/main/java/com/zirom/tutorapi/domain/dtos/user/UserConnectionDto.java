@@ -1,7 +1,6 @@
 package com.zirom.tutorapi.domain.dtos.user;
 
-import com.zirom.tutorapi.domain.ConnectionType;
-import com.zirom.tutorapi.domain.Role;
+import com.zirom.tutorapi.domain.ConnectionRequestState;
 import com.zirom.tutorapi.domain.dtos.skill.SkillDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -26,7 +25,6 @@ public class UserConnectionDto {
     private String wantToLearnDetail;
     private String wantToTeachDetail;
     private boolean connectionRequestExists;
-    private boolean accepted;
-    private ConnectionType connectionType;
+    private ConnectionRequestState requestState;
     private boolean isSender;
 }

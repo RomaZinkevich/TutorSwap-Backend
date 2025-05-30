@@ -1,6 +1,6 @@
 package com.zirom.tutorapi.domain.dtos.connection;
 
-import com.zirom.tutorapi.domain.ConnectionType;
+import com.zirom.tutorapi.domain.ConnectionRequestState;
 import com.zirom.tutorapi.domain.dtos.user.UserDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -18,7 +18,6 @@ public class ConnectionRequestDto {
     private UUID id;
     private UserDto senderUser;
     private String messageContent;
-    private boolean accepted;
+    private ConnectionRequestState requestState;
     private LocalDateTime createdAt;
-    private ConnectionType connectionType;
 }

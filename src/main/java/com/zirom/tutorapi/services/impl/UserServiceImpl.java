@@ -1,6 +1,5 @@
 package com.zirom.tutorapi.services.impl;
 
-import com.zirom.tutorapi.domain.ConnectionType;
 import com.zirom.tutorapi.domain.dtos.user.UpdateUserRequest;
 import com.zirom.tutorapi.domain.dtos.user.UserConnectionDto;
 import com.zirom.tutorapi.domain.dtos.user.UserDto;
@@ -20,7 +19,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -62,8 +60,7 @@ public class UserServiceImpl implements UserService {
 
         if (connectionBetween.isPresent()) {
             ConnectionRequest connectionRequest = connectionBetween.get();
-            userConnectionDto.setAccepted(connectionRequest.isAccepted());
-            userConnectionDto.setConnectionType(connectionRequest.getConnectionType());
+            userConnectionDto.setRequestState(connectionRequest.getRequestState());
             userConnectionDto.setSender(connectionRequest.getSenderUser().getId() == targetUserId);
             userConnectionDto.setConnectionRequestExists(true);
         } else {

@@ -1,6 +1,6 @@
 package com.zirom.tutorapi.domain.entities;
 
-import com.zirom.tutorapi.domain.ConnectionType;
+import com.zirom.tutorapi.domain.ConnectionRequestState;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -36,18 +36,14 @@ public class ConnectionRequest {
     private String messageContent;
 
     @Column(nullable = false)
-    private boolean accepted;
+    private ConnectionRequestState requestState;
 
     @Column(nullable = false)
     private LocalDateTime createdAt;
 
-    @Column(nullable = false)
-    @Enumerated(EnumType.STRING)
-    private ConnectionType connectionType;
-
     @PrePersist
     protected void onCreate() {
         this.createdAt = LocalDateTime.now();
-        this.accepted = false;
+        this.requestState = ConnectionRequestState.PENDING;
     }
 }

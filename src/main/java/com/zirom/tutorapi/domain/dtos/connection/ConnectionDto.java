@@ -1,6 +1,5 @@
 package com.zirom.tutorapi.domain.dtos.connection;
 
-import com.zirom.tutorapi.domain.ConnectionType;
 import com.zirom.tutorapi.domain.dtos.user.UserDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -19,6 +18,4 @@ public class ConnectionDto {
     private UserDto user;
 
     private UserDto partnerUser;
-
-    private ConnectionType connectionType;
 }

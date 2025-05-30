@@ -1,5 +1,6 @@
 package com.zirom.tutorapi.controllers;
 
+import com.zirom.tutorapi.domain.ConnectionRequestState;
 import com.zirom.tutorapi.domain.dtos.connection.ConnectionRequestDto;
 import com.zirom.tutorapi.domain.dtos.connection.CreateConnectionRequest;
 import com.zirom.tutorapi.domain.dtos.user.UserDto;
@@ -32,9 +33,9 @@ public class ConnectionRequestController {
     @SecurityRequirement(name = "BearerAuth")
     public ResponseEntity<List<ConnectionRequestDto>> getPrivatePendingConnectionRequests(Authentication authentication) {
         UserDto user = userService.getUserFromPrincipal((ApiUserDetails) authentication.getPrincipal());
-        List<com.zirom.tutorapi.domain.entities.ConnectionRequest> connectionRequests = connectionRequestService.getConnectionsByUser(user.getId(), false);
-        List<ConnectionRequestDto> connectionRequestDtoDtos = connectionRequests.stream().map(connectionRequestMapper::toDto).toList();
-        return new ResponseEntity<>(connectionRequestDtoDtos, HttpStatus.OK);
+        List<com.zirom.tutorapi.domain.entities.ConnectionRequest> connectionRequests = connectionRequestService.getConnectionsByUser(user.getId(), ConnectionRequestState.PENDING);
+        List<ConnectionRequestDto> connectionRequestDtos = connectionRequests.stream().map(connectionRequestMapper::toDto).toList();
+        return new ResponseEntity<>(connectionRequestDtos, HttpStatus.OK);
     }
 
     @PostMapping
@@ -53,10 +54,11 @@ public class ConnectionRequestController {
     @SecurityRequirement(name = "BearerAuth")
     public ResponseEntity<ConnectionRequestDto> updateConnectionRequest(
             @PathVariable UUID id,
+            @RequestBody boolean isAccepted,
             Authentication authentication
     ) {
         UserDto user = userService.getUserFromPrincipal((ApiUserDetails) authentication.getPrincipal());
-        com.zirom.tutorapi.domain.entities.ConnectionRequest connectionRequest = connectionRequestService.updateAccepted(id, user);
+        com.zirom.tutorapi.domain.entities.ConnectionRequest connectionRequest = connectionRequestService.updateConnectionRequest(id, user, isAccepted);
         ConnectionRequestDto connectionRequestDto = connectionRequestMapper.toDto(connectionRequest);
         return new ResponseEntity<>(connectionRequestDto, HttpStatus.OK);
     }
