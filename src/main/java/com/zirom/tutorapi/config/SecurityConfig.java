@@ -57,6 +57,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/api/v1/connection-requests/**").authenticated()
                         .requestMatchers(HttpMethod.POST, "/api/v1/connection-requests/**").authenticated()
                         .requestMatchers(HttpMethod.PUT, "/api/v1/connection-requests/**").authenticated()
+                        .requestMatchers(HttpMethod.DELETE, "/api/v1/connection-requests/**").authenticated()
                         .requestMatchers(HttpMethod.GET, "/api/v1/connections/**").authenticated()
                         .anyRequest().permitAll())
                 .csrf(AbstractHttpConfigurer::disable)

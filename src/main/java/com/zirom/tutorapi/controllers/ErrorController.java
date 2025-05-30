@@ -44,17 +44,6 @@ public class ErrorController {
         return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
     }
 
-    @ExceptionHandler(AccessDeniedException.class)
-    public ResponseEntity<ApiErrorResponse> handleAccessDeniedException(AccessDeniedException ex) {
-        log.error("Caught Exception", ex);
-
-        ApiErrorResponse error = ApiErrorResponse.builder()
-                .status(HttpStatus.FORBIDDEN.value())
-                .message(ex.getMessage())
-                .build();
-        return new ResponseEntity<>(error, HttpStatus.FORBIDDEN);
-    }
-
     @ExceptionHandler(IllegalStateException.class)
     public ResponseEntity<ApiErrorResponse> handleIllegalStateException(IllegalStateException ex) {
         log.error("Caught Exception", ex);

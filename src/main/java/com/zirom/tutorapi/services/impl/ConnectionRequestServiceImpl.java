@@ -1,5 +1,6 @@
 package com.zirom.tutorapi.services.impl;
 
+import com.zirom.tutorapi.domain.ConnectionRequestDirection;
 import com.zirom.tutorapi.domain.ConnectionRequestState;
 import com.zirom.tutorapi.domain.MessageType;
 import com.zirom.tutorapi.domain.dtos.chat.messages.requests.TextMessageRequest;
@@ -19,6 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -33,8 +35,9 @@ public class ConnectionRequestServiceImpl implements ConnectionRequestService {
     private final MessageService messageService;
 
     @Override
-    public List<ConnectionRequest> getConnectionsByUser(UUID receiverId, ConnectionRequestState state) {
-        return connectionRequestRepository.findConnectionRequestsByReceiverUser_IdAndRequestState(receiverId, state);
+    public List<ConnectionRequest> getConnectionsByUser(UUID receiverId, ConnectionRequestState state, ConnectionRequestDirection direction) {
+        if (direction == ConnectionRequestDirection.RECEIVED) return connectionRequestRepository.findConnectionRequestsByReceiverUser_IdAndRequestState(receiverId, state);
+        return connectionRequestRepository.findConnectionRequestsBySenderUser_IdAndRequestState(receiverId, state);
     }
 
     @Override
@@ -91,5 +94,21 @@ public class ConnectionRequestServiceImpl implements ConnectionRequestService {
         messageService.saveTextMessage(newMessageRequest, connectionRequest.getSenderUser().getId());
 
         return connectionRequestRepository.save(connectionRequest);
+    }
+
+    @Override
+    public void deleteConnectionRequest(UUID requestId, UUID userId) {
+        connectionRequestRepository.findById(requestId).ifPresent(request -> {
+            boolean isPendingAndSender = request.getRequestState() == ConnectionRequestState.PENDING &&
+                    request.getSenderUser().getId().equals(userId);
+
+            boolean isRejectedAndReceiver = request.getRequestState() == ConnectionRequestState.REJECTED &&
+                    request.getReceiverUser().getId().equals(userId);
+
+            if (isPendingAndSender || isRejectedAndReceiver) {
+                connectionRequestRepository.delete(request);
+            }
+            throw new AccessDeniedException("Unauthorized to delete this Connection Request");
+        });
     }
 }

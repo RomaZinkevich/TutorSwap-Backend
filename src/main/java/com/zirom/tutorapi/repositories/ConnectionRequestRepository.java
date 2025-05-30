@@ -13,6 +13,7 @@ import java.util.UUID;
 
 public interface ConnectionRequestRepository extends JpaRepository<ConnectionRequest, UUID> {
     List<ConnectionRequest> findConnectionRequestsByReceiverUser_IdAndRequestState(UUID receiverUserId, ConnectionRequestState requestState);
+    List<ConnectionRequest> findConnectionRequestsBySenderUser_IdAndRequestState(UUID receiverUserId, ConnectionRequestState requestState);
 
 
     @Query("""

@@ -1,9 +1,11 @@
 package com.zirom.tutorapi.controllers;
 
+import com.zirom.tutorapi.domain.ConnectionRequestDirection;
 import com.zirom.tutorapi.domain.ConnectionRequestState;
 import com.zirom.tutorapi.domain.dtos.connection.ConnectionRequestDto;
 import com.zirom.tutorapi.domain.dtos.connection.CreateConnectionRequest;
 import com.zirom.tutorapi.domain.dtos.user.UserDto;
+import com.zirom.tutorapi.domain.entities.ConnectionRequest;
 import com.zirom.tutorapi.mappers.ConnectionRequestMapper;
 import com.zirom.tutorapi.security.ApiUserDetails;
 import com.zirom.tutorapi.services.ConnectionRequestService;
@@ -31,9 +33,13 @@ public class ConnectionRequestController {
 
     @GetMapping
     @SecurityRequirement(name = "BearerAuth")
-    public ResponseEntity<List<ConnectionRequestDto>> getPrivatePendingConnectionRequests(Authentication authentication) {
+    public ResponseEntity<List<ConnectionRequestDto>> getPrivatePendingConnectionRequests(
+            @RequestParam(required = false, defaultValue = "PENDING") ConnectionRequestState requestState,
+            @RequestParam(required = false, defaultValue = "RECEIVED") ConnectionRequestDirection direction,
+            Authentication authentication
+    ) {
         UserDto user = userService.getUserFromPrincipal((ApiUserDetails) authentication.getPrincipal());
-        List<com.zirom.tutorapi.domain.entities.ConnectionRequest> connectionRequests = connectionRequestService.getConnectionsByUser(user.getId(), ConnectionRequestState.PENDING);
+        List<ConnectionRequest> connectionRequests = connectionRequestService.getConnectionsByUser(user.getId(), requestState, direction);
         List<ConnectionRequestDto> connectionRequestDtos = connectionRequests.stream().map(connectionRequestMapper::toDto).toList();
         return new ResponseEntity<>(connectionRequestDtos, HttpStatus.OK);
     }
@@ -45,7 +51,7 @@ public class ConnectionRequestController {
             Authentication authentication
     ) {
         UserDto user = userService.getUserFromPrincipal((ApiUserDetails) authentication.getPrincipal());
-        com.zirom.tutorapi.domain.entities.ConnectionRequest connectionRequest = connectionRequestService.addConnectionRequest(user, createConnectionRequest);
+        ConnectionRequest connectionRequest = connectionRequestService.addConnectionRequest(user, createConnectionRequest);
         ConnectionRequestDto connectionRequestDto = connectionRequestMapper.toDto(connectionRequest);
         return new ResponseEntity<>(connectionRequestDto, HttpStatus.CREATED);
     }
@@ -58,8 +64,19 @@ public class ConnectionRequestController {
             Authentication authentication
     ) {
         UserDto user = userService.getUserFromPrincipal((ApiUserDetails) authentication.getPrincipal());
-        com.zirom.tutorapi.domain.entities.ConnectionRequest connectionRequest = connectionRequestService.updateConnectionRequest(id, user, isAccepted);
+        ConnectionRequest connectionRequest = connectionRequestService.updateConnectionRequest(id, user, isAccepted);
         ConnectionRequestDto connectionRequestDto = connectionRequestMapper.toDto(connectionRequest);
         return new ResponseEntity<>(connectionRequestDto, HttpStatus.OK);
+    }
+
+    @DeleteMapping(path="/{id}")
+    @SecurityRequirement(name = "BearerAuth")
+    public ResponseEntity deleteConnectionRequest(
+            @PathVariable UUID id,
+            Authentication authentication
+    ) {
+        UserDto user = userService.getUserFromPrincipal((ApiUserDetails) authentication.getPrincipal());
+        connectionRequestService.deleteConnectionRequest(id, user.getId());
+        return new ResponseEntity(HttpStatus.NO_CONTENT);
     }
 }

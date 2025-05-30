@@ -1,5 +1,6 @@
 package com.zirom.tutorapi.services;
 
+import com.zirom.tutorapi.domain.ConnectionRequestDirection;
 import com.zirom.tutorapi.domain.ConnectionRequestState;
 import com.zirom.tutorapi.domain.dtos.connection.CreateConnectionRequest;
 import com.zirom.tutorapi.domain.dtos.user.UserDto;
@@ -9,9 +10,11 @@ import java.util.List;
 import java.util.UUID;
 
 public interface ConnectionRequestService {
-    List<ConnectionRequest> getConnectionsByUser(UUID receiverId, ConnectionRequestState state);
+    List<ConnectionRequest> getConnectionsByUser(UUID receiverId, ConnectionRequestState state, ConnectionRequestDirection direction);
 
     ConnectionRequest addConnectionRequest(UserDto user, CreateConnectionRequest createConnectionRequest);
 
     ConnectionRequest updateConnectionRequest(UUID id, UserDto loggedinUserDto, boolean isAccepted);
+
+    void deleteConnectionRequest(UUID requestId, UUID userId);
 }
