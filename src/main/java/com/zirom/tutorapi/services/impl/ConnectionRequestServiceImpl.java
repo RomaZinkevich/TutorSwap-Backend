@@ -107,8 +107,9 @@ public class ConnectionRequestServiceImpl implements ConnectionRequestService {
 
             if (isPendingAndSender || isRejectedAndReceiver) {
                 connectionRequestRepository.delete(request);
+            } else {
+                throw new AccessDeniedException("Unauthorized to delete this Connection Request");
             }
-            throw new AccessDeniedException("Unauthorized to delete this Connection Request");
         });
     }
 }
