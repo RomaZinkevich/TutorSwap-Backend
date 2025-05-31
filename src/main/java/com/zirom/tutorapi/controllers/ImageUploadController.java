@@ -1,5 +1,6 @@
 package com.zirom.tutorapi.controllers;
 
+import org.apache.coyote.BadRequestException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -8,6 +9,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Objects;
+import java.util.UUID;
 
 @RestController("/api/v1")
 public class ImageUploadController {
@@ -24,11 +27,17 @@ public class ImageUploadController {
                 return ResponseEntity.status(500).body("Failed to create directory.");
             }
         }
+        if (!Objects.requireNonNull(image.getOriginalFilename()).endsWith(".jpg")) {
+            throw new BadRequestException("Unsupported image type");
+        }
+        if (image.getSize() > 5 * 1024 * 1024) {
+            throw new BadRequestException("Too large image size");
+        }
 
-        String fileName = image.getOriginalFilename();
-        File destination = new File(directory, fileName);
+        String uniqueFilename = UUID.randomUUID().toString() + ".jpg";
+        File destination = new File(directory, uniqueFilename);
         image.transferTo(destination);
 
-        return ResponseEntity.ok(fileName);
+        return ResponseEntity.ok(uniqueFilename);
     }
 }
