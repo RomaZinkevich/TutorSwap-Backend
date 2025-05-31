@@ -14,8 +14,7 @@ import java.util.UUID;
 @Builder
 public class ChatDto {
     private UUID id;
-    private UserDto senderUser;
-    private UserDto receiverUser;
+    private UserDto user;
     private MessageDto lastMessage;
 
     @JsonProperty("isLearner")
