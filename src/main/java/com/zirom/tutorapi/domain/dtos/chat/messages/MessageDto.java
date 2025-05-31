@@ -17,12 +17,12 @@ import java.util.UUID;
 @JsonTypeInfo(
         use = JsonTypeInfo.Id.NAME,
         include = JsonTypeInfo.As.PROPERTY,
-        property = "type"
+        property = "messageType"
 )
 @JsonSubTypes({
-        @JsonSubTypes.Type(value = TextMessageDto.class, name = "text"),
-        @JsonSubTypes.Type(value = ImageMessageDto.class, name = "image"),
-        @JsonSubTypes.Type(value = VideoMessageDto.class, name = "video")
+        @JsonSubTypes.Type(value = TextMessageDto.class, name = "TEXT"),
+        @JsonSubTypes.Type(value = ImageMessageDto.class, name = "IMAGE"),
+        @JsonSubTypes.Type(value = VideoMessageDto.class, name = "VIDEO")
 })
 public abstract class MessageDto {
     private UUID id;
