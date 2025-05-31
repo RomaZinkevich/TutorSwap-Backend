@@ -25,9 +25,10 @@ public class ImageUploadController {
             }
         }
 
-        File destination = new File(directory, image.getOriginalFilename());
+        String fileName = image.getOriginalFilename();
+        File destination = new File(directory, fileName);
         image.transferTo(destination);
 
-        return ResponseEntity.ok("Saved to: " + destination.getAbsolutePath());
+        return ResponseEntity.ok(fileName);
     }
 }
