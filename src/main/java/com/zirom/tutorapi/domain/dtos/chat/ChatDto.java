@@ -1,5 +1,6 @@
 package com.zirom.tutorapi.domain.dtos.chat;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.zirom.tutorapi.domain.dtos.chat.messages.MessageDto;
 import com.zirom.tutorapi.domain.dtos.user.UserDto;
 import lombok.*;
@@ -16,5 +17,7 @@ public class ChatDto {
     private UserDto senderUser;
     private UserDto receiverUser;
     private MessageDto lastMessage;
+
+    @JsonProperty("isLearner")
     private boolean isLearner;
 }
