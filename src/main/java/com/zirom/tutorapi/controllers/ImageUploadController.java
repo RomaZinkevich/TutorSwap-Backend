@@ -30,7 +30,7 @@ public class ImageUploadController {
         if (!Objects.requireNonNull(image.getOriginalFilename()).endsWith(".jpeg")) {
             throw new BadRequestException("Unsupported image type");
         }
-        if (image.getSize() > 5 * 1024 * 1024) {
+        if (image.getSize() > 15 * 1024 * 1024) {
             throw new BadRequestException("Too large image size");
         }
 
