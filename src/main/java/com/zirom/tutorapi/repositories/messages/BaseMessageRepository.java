@@ -8,8 +8,9 @@ import java.util.List;
 import java.util.UUID;
 
 public interface BaseMessageRepository extends JpaRepository<BaseMessage, UUID> {
-    @Query("SELECT m FROM BaseMessage m WHERE (m.sender.id = :userId OR m.receiver.id = :userId) AND m.chat.id = :chatId")
-    List<BaseMessage> findAllMessagesByChatIdAndSenderOrReceiverIds(UUID userId, UUID chatId);
 
+    //Get last message from the chat
     BaseMessage findBaseMessageByChat_IdOrderByTimestampDesc(UUID chatId);
+
+    List<BaseMessage> findAllByChat_IdOrderByTimestampAsc(UUID chatId);
 }

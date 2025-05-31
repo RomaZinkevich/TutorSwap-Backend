@@ -13,9 +13,9 @@ import com.zirom.tutorapi.services.MessageService;
 import com.zirom.tutorapi.services.UserService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.util.List;
 import java.util.UUID;
 
@@ -30,7 +30,12 @@ public class MessageServiceImpl implements MessageService {
 
     @Override
     public List<BaseMessage> getAllMessagesByChatAndUserIds(UUID userId, UUID chatId) {
-        return baseMessageRepository.findAllMessagesByChatIdAndSenderOrReceiverIds(userId, chatId);
+        List<BaseMessage> messages = baseMessageRepository.findAllByChat_IdOrderByTimestampAsc(chatId);
+        if (messages.isEmpty()) throw new EntityNotFoundException();
+        if (!messages.get(0).getSender().getId().equals(userId) && !messages.get(0).getReceiver().getId().equals(userId)) {
+            throw new AccessDeniedException("No rights to access this chat");
+        }
+        return messages;
     }
 
     @Override
