@@ -14,7 +14,7 @@ public interface ConnectionRequestService {
 
     ConnectionRequest addConnectionRequest(UserDto user, CreateConnectionRequest createConnectionRequest);
 
-    ConnectionRequest updateConnectionRequest(UUID id, UserDto loggedinUserDto, boolean isAccepted);
+    ConnectionRequest updateConnectionRequest(UUID targetId, UUID loggedInUserId, boolean isAccepted);
 
-    void deleteConnectionRequest(UUID requestId, UUID userId);
+    void deleteConnectionRequest(UUID targetId, UUID loggedInUserId);
 }

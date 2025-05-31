@@ -64,9 +64,9 @@ public class ConnectionRequestServiceImpl implements ConnectionRequestService {
 
     @Override
     @Transactional
-    public ConnectionRequest updateConnectionRequest(UUID id, UserDto loggedinUserDto, boolean isAccepted) {
-        ConnectionRequest connectionRequest = connectionRequestRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Entity not found"));
-        if (!connectionRequest.getReceiverUser().getId().equals(loggedinUserDto.getId())) {
+    public ConnectionRequest updateConnectionRequest(UUID targetId, UUID loggedInUserId, boolean isAccepted) {
+        ConnectionRequest connectionRequest = connectionRequestRepository.findConnectionBetween(targetId, loggedInUserId).orElseThrow(() -> new EntityNotFoundException("Entity not found"));
+        if (!connectionRequest.getReceiverUser().getId().equals(loggedInUserId)) {
             throw new AccessDeniedException("No rights to access this Connection Request");
         }
 
@@ -97,13 +97,13 @@ public class ConnectionRequestServiceImpl implements ConnectionRequestService {
     }
 
     @Override
-    public void deleteConnectionRequest(UUID requestId, UUID userId) {
-        connectionRequestRepository.findById(requestId).ifPresent(request -> {
+    public void deleteConnectionRequest(UUID targetId, UUID loggedInUserId) {
+        connectionRequestRepository.findConnectionBetween(targetId, loggedInUserId).ifPresent(request -> {
             boolean isPendingAndSender = request.getRequestState() == ConnectionRequestState.PENDING &&
-                    request.getSenderUser().getId().equals(userId);
+                    request.getSenderUser().getId().equals(loggedInUserId);
 
             boolean isRejectedAndReceiver = request.getRequestState() == ConnectionRequestState.REJECTED &&
-                    request.getReceiverUser().getId().equals(userId);
+                    request.getReceiverUser().getId().equals(loggedInUserId);
 
             if (isPendingAndSender || isRejectedAndReceiver) {
                 connectionRequestRepository.delete(request);
