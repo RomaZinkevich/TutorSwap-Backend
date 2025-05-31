@@ -34,7 +34,7 @@ public class ChatController {
         MessageDto messageDto;
         if (messageRequest instanceof TextMessageRequest text) {
             BaseMessage baseMessage = messageService.saveTextMessage(text, senderId);
-            messageDto = messageMapper.toDto(baseMessage);
+            messageDto = messageMapper.toDto(baseMessage, senderId);
         }
         else {
             ErrorMessageDto error = new ErrorMessageDto().builder()

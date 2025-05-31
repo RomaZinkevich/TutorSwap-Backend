@@ -52,8 +52,9 @@ public class ChatRestController {
             @PathVariable UUID id
     ) {
         UserDto user = userService.getUserFromPrincipal((ApiUserDetails) authentication.getPrincipal());
-        List<BaseMessage> messages = messageService.getAllMessagesByChatAndUserIds(user.getId(), id);
-        List<MessageDto> messageDtos = messages.stream().map(messageMapper::toDto).toList();
+        UUID userId = user.getId();
+        List<BaseMessage> messages = messageService.getAllMessagesByChatAndUserIds(userId, id);
+        List<MessageDto> messageDtos = messages.stream().map((BaseMessage message) -> messageMapper.toDto(message, userId)).toList();
         return new ResponseEntity<>(messageDtos, HttpStatus.OK);
     }
 }

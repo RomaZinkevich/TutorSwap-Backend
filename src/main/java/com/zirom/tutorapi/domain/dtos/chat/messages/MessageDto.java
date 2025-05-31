@@ -1,5 +1,6 @@
 package com.zirom.tutorapi.domain.dtos.chat.messages;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.zirom.tutorapi.domain.MessageType;
 import com.zirom.tutorapi.domain.dtos.chat.ChatDto;
 import com.zirom.tutorapi.domain.dtos.user.UserDto;
@@ -26,8 +27,9 @@ import java.util.UUID;
 })
 public abstract class MessageDto {
     private UUID id;
-    private UserDto sender;
-    private UserDto receiver;
+    private UserDto user;
     private MessageType messageType;
     private LocalDateTime timestamp;
+    @JsonProperty("isSender")
+    private boolean isSender;
 }
