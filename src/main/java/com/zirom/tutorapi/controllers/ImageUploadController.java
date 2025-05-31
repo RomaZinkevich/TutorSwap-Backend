@@ -27,14 +27,14 @@ public class ImageUploadController {
                 return ResponseEntity.status(500).body("Failed to create directory.");
             }
         }
-        if (!Objects.requireNonNull(image.getOriginalFilename()).endsWith(".jpg")) {
+        if (!Objects.requireNonNull(image.getOriginalFilename()).endsWith(".jpeg")) {
             throw new BadRequestException("Unsupported image type");
         }
         if (image.getSize() > 5 * 1024 * 1024) {
             throw new BadRequestException("Too large image size");
         }
 
-        String uniqueFilename = UUID.randomUUID().toString() + ".jpg";
+        String uniqueFilename = UUID.randomUUID().toString() + ".jpeg";
         File destination = new File(directory, uniqueFilename);
         image.transferTo(destination);
 
