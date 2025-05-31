@@ -15,7 +15,7 @@ public class ImageUploadController {
     @Value("${FILE_STORAGE_PATH}")
     private String BASE_PATH;
 
-    @PostMapping(value = "/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(value = "/uploads", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> handleImageUpload(@RequestParam("image") MultipartFile image) throws IOException {
         File directory = new File(BASE_PATH);
         if (!directory.exists()) {

@@ -13,6 +13,7 @@ import com.zirom.tutorapi.domain.entities.User;
 import com.zirom.tutorapi.mappers.UserMapper;
 import com.zirom.tutorapi.repositories.ConnectionRequestRepository;
 import com.zirom.tutorapi.services.*;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.AccessDeniedException;
@@ -25,6 +26,7 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
+@Tag(name="Image")
 public class ConnectionRequestServiceImpl implements ConnectionRequestService {
 
     private final ConnectionRequestRepository connectionRequestRepository;
