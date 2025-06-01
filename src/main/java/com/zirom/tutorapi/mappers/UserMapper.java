@@ -1,5 +1,6 @@
 package com.zirom.tutorapi.mappers;
 
+import com.zirom.tutorapi.domain.dtos.user.OtherUserDto;
 import com.zirom.tutorapi.domain.dtos.user.UserDto;
 import com.zirom.tutorapi.domain.entities.User;
 import org.mapstruct.ReportingPolicy;
@@ -12,6 +13,10 @@ public interface UserMapper {
     @Mapping(target = "skillToLearn", source = "skillToLearn")
     @Mapping(target = "skillToTeach", source = "skillToTeach")
     UserDto toDto(User user);
+
+    @Mapping(target = "skillToLearn", source = "skillToLearn")
+    @Mapping(target = "skillToTeach", source = "skillToTeach")
+    OtherUserDto toOthersDto(User user);
 
     @Mapping(target = "skillToLearn", source = "skillToLearn")
     @Mapping(target = "skillToTeach", source = "skillToTeach")

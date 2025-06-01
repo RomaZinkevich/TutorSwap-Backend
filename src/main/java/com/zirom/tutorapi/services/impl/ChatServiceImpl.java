@@ -43,20 +43,17 @@ public class ChatServiceImpl implements ChatService {
         List<Chat> chats = chatRepository.findAllByReceiverUserIdOrSenderUserId(userId);
         List<ChatDto> chatDtos = new ArrayList<>();
         chats.forEach(chat -> {
+            User user = chat.getSenderUser().getId().equals(userId) ? chat.getReceiverUser() : chat.getSenderUser();
+            UserDto userDto = userMapper.toDto(user);
+            ChatDto chatDto = chatMapper.toDto(chat);
             BaseMessage lastMessage = baseMessageRepository.findBaseMessageByChat_IdOrderByTimestampDesc(chat.getId());
             MessageDto lastMessageDto = messageMapper.toDto(lastMessage, userId);
-            ChatDto chatDto = chatMapper.toDto(chat);
             boolean isLearner = chat.getSenderUser().getId().equals(userId);
+
             chatDto.setLearner(isLearner);
             chatDto.setLastMessage(lastMessageDto);
-            User user;
-            if (chat.getSenderUser().getId().equals(userId)) {
-                user = chat.getReceiverUser();
-            } else {
-                user = chat.getSenderUser();
-            }
-            UserDto userDto = userMapper.toDto(user);
             chatDto.setUser(userDto);
+
             chatDtos.add(chatDto);
         });
         return chatDtos;

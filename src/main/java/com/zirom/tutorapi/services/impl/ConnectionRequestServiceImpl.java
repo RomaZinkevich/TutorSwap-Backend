@@ -114,4 +114,9 @@ public class ConnectionRequestServiceImpl implements ConnectionRequestService {
             }
         });
     }
+
+    @Override
+    public ConnectionRequest getConnectionRequest(UUID targetId, UUID loggedInUserId) {
+        return connectionRequestRepository.findConnectionBetween(targetId, loggedInUserId).orElseThrow(() -> new EntityNotFoundException("Entity not found"));
+    }
 }

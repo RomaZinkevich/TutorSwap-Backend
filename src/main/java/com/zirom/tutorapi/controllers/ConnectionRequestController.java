@@ -44,6 +44,18 @@ public class ConnectionRequestController {
         return new ResponseEntity<>(connectionRequestDtos, HttpStatus.OK);
     }
 
+    @GetMapping("/{id}")
+    @SecurityRequirement(name = "BearerAuth")
+    public ResponseEntity<ConnectionRequestDto> getConnectionRequest(
+            Authentication authentication,
+            @PathVariable UUID id
+    ) {
+        UserDto user = userService.getUserFromPrincipal((ApiUserDetails) authentication.getPrincipal());
+        ConnectionRequest connectionRequests = connectionRequestService.getConnectionRequest(id, user.getId());
+        ConnectionRequestDto connectionRequestDto = connectionRequestMapper.toDto(connectionRequests);
+        return new ResponseEntity<>(connectionRequestDto, HttpStatus.OK);
+    }
+
     @PostMapping
     @SecurityRequirement(name = "BearerAuth")
     public ResponseEntity<ConnectionRequestDto> createConnectionRequest(

@@ -54,7 +54,6 @@ public class UserServiceImpl implements UserService {
         UserConnectionDto userConnectionDto = new UserConnectionDto();
         userConnectionDto.setId(targetUserId);
         userConnectionDto.setName(targetUser.getName());
-        userConnectionDto.setEmail(targetUser.getEmail());
         userConnectionDto.setProfileImage(targetUser.getProfileImage());
         userConnectionDto.setDescription(targetUser.getDescription());
         userConnectionDto.setUniversityName(targetUser.getUniversityName());

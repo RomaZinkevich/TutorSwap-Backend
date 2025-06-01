@@ -17,4 +17,6 @@ public interface ConnectionRequestService {
     ConnectionRequest updateConnectionRequest(UUID targetId, UUID loggedInUserId, boolean isAccepted);
 
     void deleteConnectionRequest(UUID targetId, UUID loggedInUserId);
+
+    ConnectionRequest getConnectionRequest(UUID targetId, UUID loggedInUserId);
 }

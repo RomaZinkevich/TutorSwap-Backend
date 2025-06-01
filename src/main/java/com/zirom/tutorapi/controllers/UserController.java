@@ -1,5 +1,6 @@
 package com.zirom.tutorapi.controllers;
 
+import com.zirom.tutorapi.domain.dtos.user.OtherUserDto;
 import com.zirom.tutorapi.domain.dtos.user.UpdateUserRequest;
 import com.zirom.tutorapi.domain.dtos.user.UserConnectionDto;
 import com.zirom.tutorapi.domain.dtos.user.UserDto;
@@ -66,31 +67,10 @@ public class UserController {
 
     @GetMapping()
     @SecurityRequirement(name = "BearerAuth")
-    public ResponseEntity<List<UserDto>> getAllUsers(Authentication authentication) {
+    public ResponseEntity<List<OtherUserDto>> getAllUsers(Authentication authentication) {
         UserDto loggedInUser = userService.getUserFromPrincipal((ApiUserDetails) authentication.getPrincipal());
         List<User> users = userService.getAllUsersExceptConnected(loggedInUser.getId());
-        List<UserDto> userDtos = users.stream().map(userMapper::toDto).collect(Collectors.toList());
+        List<OtherUserDto> userDtos = users.stream().map(userMapper::toOthersDto).collect(Collectors.toList());
         return new ResponseEntity<>(userDtos, HttpStatus.OK);
     }
-
-    @GetMapping(path="/learn-to-teach")
-    @SecurityRequirement(name = "BearerAuth")
-    public ResponseEntity<List<UserDto>> getUsersLearnToTeach(Authentication authentication) {
-        UserDto loggedInUser = userService.getUserFromPrincipal((ApiUserDetails) authentication.getPrincipal());
-        Skill skill = skillMapper.toEntity(loggedInUser.getSkillToLearn());
-        List<User> matchedUsers = userService.findByLearnToTeach(skill);
-        List<UserDto> matchedUserDtos = matchedUsers.stream().map(userMapper::toDto).collect(Collectors.toList());
-        return new ResponseEntity<>(matchedUserDtos, HttpStatus.OK);
-    }
-
-    @GetMapping(path="/teach-to-learn")
-    @SecurityRequirement(name = "BearerAuth")
-    public ResponseEntity<List<UserDto>> getUsersTeachToLearn(Authentication authentication) {
-        UserDto loggedInUser = userService.getUserFromPrincipal((ApiUserDetails) authentication.getPrincipal());
-        Skill skill = skillMapper.toEntity(loggedInUser.getSkillToTeach());
-        List<User> matchedUsers = userService.findByTeachToLearn(skill);
-        List<UserDto> matchedUserDtos = matchedUsers.stream().map(userMapper::toDto).collect(Collectors.toList());
-        return new ResponseEntity<>(matchedUserDtos, HttpStatus.OK);
-    }
-
 }
