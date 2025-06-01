@@ -1,5 +1,6 @@
 package com.zirom.tutorapi.repositories;
 
+import com.zirom.tutorapi.domain.dtos.chat.ChatMessagesDto;
 import com.zirom.tutorapi.domain.entities.Chat;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;

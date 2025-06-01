@@ -1,6 +1,7 @@
 package com.zirom.tutorapi.services;
 
 import com.zirom.tutorapi.domain.dtos.chat.ChatDto;
+import com.zirom.tutorapi.domain.dtos.chat.ChatMessagesDto;
 import com.zirom.tutorapi.domain.entities.Chat;
 
 import java.util.List;
@@ -11,4 +12,5 @@ public interface ChatService {
     Chat createChat(Chat chat);
     List<ChatDto> getAllChatsByUserId(UUID userId);
     Optional<Chat> getChatById(UUID chatId);
+    ChatMessagesDto getChatAndMessagesById(UUID chatId, UUID loggedInUserId);
 }

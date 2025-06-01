@@ -1,5 +1,6 @@
 package com.zirom.tutorapi.services;
 
+import com.zirom.tutorapi.domain.dtos.chat.ChatMessagesDto;
 import com.zirom.tutorapi.domain.dtos.chat.messages.MessageDto;
 import com.zirom.tutorapi.domain.dtos.chat.messages.requests.MessageRequest;
 import com.zirom.tutorapi.domain.dtos.chat.messages.requests.TextMessageRequest;

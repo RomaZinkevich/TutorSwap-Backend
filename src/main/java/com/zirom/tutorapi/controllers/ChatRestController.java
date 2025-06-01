@@ -1,6 +1,7 @@
 package com.zirom.tutorapi.controllers;
 
 import com.zirom.tutorapi.domain.dtos.chat.ChatDto;
+import com.zirom.tutorapi.domain.dtos.chat.ChatMessagesDto;
 import com.zirom.tutorapi.domain.dtos.chat.messages.MessageDto;
 import com.zirom.tutorapi.domain.dtos.user.UserDto;
 import com.zirom.tutorapi.domain.entities.Chat;
@@ -45,16 +46,15 @@ public class ChatRestController {
         return new ResponseEntity<>(chatDtos, HttpStatus.OK);
     }
 
-    @GetMapping(path="/{id}/messages")
+    @GetMapping(path="/{id}")
     @SecurityRequirement(name = "BearerAuth")
-    public ResponseEntity<List<MessageDto>> getMessagesByChatId(
+    public ResponseEntity<ChatMessagesDto> getMessagesByChatId(
             Authentication authentication,
             @PathVariable UUID id
     ) {
         UserDto user = userService.getUserFromPrincipal((ApiUserDetails) authentication.getPrincipal());
         UUID userId = user.getId();
-        List<BaseMessage> messages = messageService.getAllMessagesByChatAndUserIds(userId, id);
-        List<MessageDto> messageDtos = messages.stream().map((BaseMessage message) -> messageMapper.toDto(message, userId)).toList();
-        return new ResponseEntity<>(messageDtos, HttpStatus.OK);
+        ChatMessagesDto messages = chatService.getChatAndMessagesById(id, userId);
+        return new ResponseEntity<>(messages, HttpStatus.OK);
     }
 }
