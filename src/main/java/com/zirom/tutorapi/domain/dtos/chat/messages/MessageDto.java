@@ -27,7 +27,6 @@ import java.util.UUID;
 })
 public abstract class MessageDto {
     private UUID id;
-    private UserDto user;
     private MessageType messageType;
     private LocalDateTime timestamp;
     @JsonProperty("isSender")

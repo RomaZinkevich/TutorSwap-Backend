@@ -2,6 +2,7 @@ package com.zirom.tutorapi.services.impl;
 
 import com.zirom.tutorapi.domain.dtos.chat.ChatDto;
 import com.zirom.tutorapi.domain.dtos.chat.messages.MessageDto;
+import com.zirom.tutorapi.domain.dtos.user.OtherUserDto;
 import com.zirom.tutorapi.domain.dtos.user.UserDto;
 import com.zirom.tutorapi.domain.entities.Chat;
 import com.zirom.tutorapi.domain.entities.User;
@@ -44,7 +45,7 @@ public class ChatServiceImpl implements ChatService {
         List<ChatDto> chatDtos = new ArrayList<>();
         chats.forEach(chat -> {
             User user = chat.getSenderUser().getId().equals(userId) ? chat.getReceiverUser() : chat.getSenderUser();
-            UserDto userDto = userMapper.toDto(user);
+            OtherUserDto userDto = userMapper.toOthersDto(user);
             ChatDto chatDto = chatMapper.toDto(chat);
             BaseMessage lastMessage = baseMessageRepository.findBaseMessageByChat_IdOrderByTimestampDesc(chat.getId());
             MessageDto lastMessageDto = messageMapper.toDto(lastMessage, userId);

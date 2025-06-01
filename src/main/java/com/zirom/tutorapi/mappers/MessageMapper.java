@@ -59,16 +59,10 @@ public class MessageMapper {
         }
 
         // Common fields
-        boolean isSender = false;
-        User user = message.getSender();
-        if (message.getSender().getId() == loggedInUserId) {
-            isSender = true;
-            user = message.getReceiver();
-        }
+        boolean isSender = message.getSender().getId() == loggedInUserId;
 
         dto.setId(message.getId());
         dto.setSender(isSender);
-        dto.setUser(userMapper.toDto(user));
         dto.setMessageType(message.getMessageType());
         dto.setTimestamp(message.getTimestamp());
 
