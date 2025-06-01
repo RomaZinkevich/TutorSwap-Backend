@@ -35,7 +35,7 @@ public class ImageUploadController {
             throw new BadRequestException("Too large image size");
         }
 
-        String uniqueFilename = UUID.randomUUID().toString() + ".jpeg";
+        String uniqueFilename = UUID.randomUUID().toString() + filename.substring(filename.lastIndexOf("."));
         File destination = new File(directory, uniqueFilename);
         image.transferTo(destination);
 
