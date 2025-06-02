@@ -9,4 +9,6 @@ public interface ConnectionService {
     Connection createConnection(Connection connection);
 
     List<Connection> getAllConnectionsByUserId(UUID id);
+
+    void deleteConnection(UUID targetUserId, UUID loggedInUserId);
 }
