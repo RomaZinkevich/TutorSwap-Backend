@@ -31,8 +31,26 @@ public class BaseMessage {
     private User receiver;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "chat_id", nullable = false)
+    @JoinColumn(name = "chat_id", nullable = false,
+            foreignKey = @ForeignKey(name = "fk_message_chat",
+                    foreignKeyDefinition = "FOREIGN KEY (chat_id) REFERENCES chats(id) ON DELETE CASCADE"))
     private Chat chat;
+
+    // Remove JPA cascade - we'll use database cascade instead
+    @OneToOne(mappedBy = "message", fetch = FetchType.LAZY)
+    private ImageMessage imageMessage;
+
+    @OneToOne(mappedBy = "message", fetch = FetchType.LAZY)
+    private TextMessage textMessage;
+
+    @OneToOne(mappedBy = "message", fetch = FetchType.LAZY)
+    private VideoMessage videoMessage;
+
+    @OneToOne(mappedBy = "message", fetch = FetchType.LAZY)
+    private ScheduleMessage scheduleMessage;
+
+    @OneToOne(mappedBy = "message", fetch = FetchType.LAZY)
+    private LessonRequestMessage lessonRequestMessage;
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)

@@ -8,6 +8,7 @@ import com.zirom.tutorapi.domain.entities.messages.BaseMessage;
 import com.zirom.tutorapi.domain.entities.messages.TextMessage;
 import com.zirom.tutorapi.repositories.messages.BaseMessageRepository;
 import com.zirom.tutorapi.repositories.messages.TextMessageRepository;
+import com.zirom.tutorapi.services.AuthorizationService;
 import com.zirom.tutorapi.services.ChatService;
 import com.zirom.tutorapi.services.MessageService;
 import com.zirom.tutorapi.services.UserService;
@@ -27,14 +28,13 @@ public class MessageServiceImpl implements MessageService {
     private final TextMessageRepository textMessageRepository;
     private final UserService userService;
     private final ChatService chatService;
+    private final AuthorizationService authorizationService;
 
     @Override
     public List<BaseMessage> getAllMessagesByChatAndUserIds(UUID userId, UUID chatId) {
         List<BaseMessage> messages = baseMessageRepository.findAllByChat_IdOrderByTimestampAsc(chatId);
         if (messages.isEmpty()) throw new EntityNotFoundException();
-        if (!messages.get(0).getSender().getId().equals(userId) && !messages.get(0).getReceiver().getId().equals(userId)) {
-            throw new AccessDeniedException("No rights to access this chat");
-        }
+        authorizationService.hasAccessToChat(messages.get(0).getChat(), userId);
         return messages;
     }
 

@@ -13,6 +13,7 @@ import com.zirom.tutorapi.mappers.MessageMapper;
 import com.zirom.tutorapi.mappers.UserMapper;
 import com.zirom.tutorapi.repositories.ChatRepository;
 import com.zirom.tutorapi.repositories.messages.BaseMessageRepository;
+import com.zirom.tutorapi.services.AuthorizationService;
 import com.zirom.tutorapi.services.ChatService;
 import com.zirom.tutorapi.services.MessageService;
 import jakarta.persistence.EntityNotFoundException;
@@ -36,6 +37,7 @@ public class ChatServiceImpl implements ChatService {
     private final ChatMapper chatMapper;
     private final UserMapper userMapper;
     private final BaseMessageRepository baseMessageRepository;
+    private final AuthorizationService authorizationService;
 
     @Override
     public Chat createChat(Chat chat) {
@@ -72,9 +74,7 @@ public class ChatServiceImpl implements ChatService {
     @Override
     public ChatMessagesDto getChatAndMessagesById(UUID chatId, UUID loggedInUserId){
         Chat chat = chatRepository.findById(chatId).orElseThrow(EntityNotFoundException::new);
-        if (!chat.getSenderUser().getId().equals(loggedInUserId) && !chat.getReceiverUser().getId().equals(loggedInUserId)){
-            throw new AccessDeniedException("No rights to access this chat");
-        }
+        authorizationService.hasAccessToChat(chat, loggedInUserId);
         List<BaseMessage> messages = baseMessageRepository.findAllByChat_IdOrderByTimestampAsc(chatId);
         List<MessageDto> messageDtos = messages.stream()
                 .map(m -> messageMapper.toDto(m, loggedInUserId))

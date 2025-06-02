@@ -19,7 +19,9 @@ public class TextMessage {
 
     @OneToOne(fetch = FetchType.LAZY)
     @MapsId
-    @JoinColumn(name = "message_id", nullable = false)
+    @JoinColumn(name = "message_id", nullable = false,
+            foreignKey = @ForeignKey(name = "fk_textmessage_basemessage",
+                    foreignKeyDefinition = "FOREIGN KEY (message_id) REFERENCES messages(id) ON DELETE CASCADE"))
     private BaseMessage message;
 
     private String content;

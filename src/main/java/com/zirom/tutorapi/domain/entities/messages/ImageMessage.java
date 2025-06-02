@@ -19,7 +19,9 @@ public class ImageMessage {
 
     @OneToOne(fetch = FetchType.LAZY)
     @MapsId
-    @JoinColumn(name = "message_id", nullable = false)
+    @JoinColumn(name = "message_id", nullable = false,
+            foreignKey = @ForeignKey(name = "fk_imagemessage_basemessage",
+                    foreignKeyDefinition = "FOREIGN KEY (message_id) REFERENCES messages(id) ON DELETE CASCADE"))
     private BaseMessage message;
 
     @Column(nullable = false)
