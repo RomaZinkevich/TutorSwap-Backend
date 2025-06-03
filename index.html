@@ -27,8 +27,8 @@
             border-radius: 20px;
             box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
             width: 100%;
-            max-width: 800px;
-            height: 600px;
+            max-width: 900px;
+            height: 700px;
             display: flex;
             flex-direction: column;
             overflow: hidden;
@@ -65,7 +65,7 @@
             color: #495057;
         }
 
-        .input-group input {
+        .input-group input, .input-group select {
             flex: 1;
             padding: 10px 15px;
             border: 2px solid #e9ecef;
@@ -74,7 +74,7 @@
             transition: all 0.3s ease;
         }
 
-        .input-group input:focus {
+        .input-group input:focus, .input-group select:focus {
             outline: none;
             border-color: #4facfe;
             box-shadow: 0 0 0 3px rgba(79, 172, 254, 0.1);
@@ -204,12 +204,71 @@
             margin: 0 auto;
         }
 
-        .message-input {
+        .message-type-badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 10px;
+            font-weight: bold;
+            text-transform: uppercase;
+            margin-bottom: 5px;
+        }
+
+        .message-type-badge.text {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .message-type-badge.video {
+            background: #ff6b6b;
+            color: white;
+        }
+
+        .message-type-badge.image {
+            background: #4ecdc4;
+            color: white;
+        }
+
+        .message-compose {
+            border: 2px solid #e9ecef;
+            border-radius: 15px;
+            padding: 15px;
+            background: white;
+        }
+
+        .message-type-selector {
             display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            align-items: center;
+        }
+
+        .message-type-selector label {
+            font-weight: 600;
+            color: #495057;
+            min-width: 100px;
+        }
+
+        .message-type-selector select {
+            padding: 8px 12px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 14px;
+            background: white;
+        }
+
+        .message-inputs {
+            display: flex;
+            flex-direction: column;
             gap: 10px;
         }
 
-        .message-input input {
+        .message-input-row {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .message-input-row input {
             flex: 1;
             padding: 12px 15px;
             border: 2px solid #e9ecef;
@@ -218,15 +277,21 @@
             transition: all 0.3s ease;
         }
 
-        .message-input input:focus {
+        .message-input-row input:focus {
             outline: none;
             border-color: #4facfe;
             box-shadow: 0 0 0 3px rgba(79, 172, 254, 0.1);
         }
 
-        .message-input button {
+        .message-input-row button {
             border-radius: 25px;
             min-width: 80px;
+        }
+
+        .url-input {
+            background-color: #f8f9fa !important;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
         }
 
         .connection-controls {
@@ -271,6 +336,10 @@
             background: #4facfe;
             border-radius: 10px;
         }
+
+        .hidden {
+            display: none !important;
+        }
     </style>
 </head>
 <body>
@@ -311,9 +380,41 @@
     <div class="chat-area">
         <div class="messages scrollbar" id="messages"></div>
 
-        <div class="message-input">
-            <input type="text" id="messageInput" placeholder="Type your message..." disabled />
-            <button class="btn btn-primary" id="sendBtn" disabled>Send</button>
+        <div class="message-compose">
+            <div class="message-type-selector">
+                <label for="messageType">Message Type:</label>
+                <select id="messageType">
+                    <option value="TEXT">Text Message</option>
+                    <option value="IMAGE">Image Message</option>
+                    <option value="VIDEO">Video Message</option>
+                </select>
+            </div>
+
+            <div class="message-inputs">
+                <!-- Text Message Input -->
+                <div class="message-input-row" id="textInputRow">
+                    <input type="text" id="textInput" placeholder="Type your message..." disabled />
+                    <button class="btn btn-primary" id="sendBtn" disabled>Send</button>
+                </div>
+
+                <!-- Image Message Inputs -->
+                <div class="message-input-row hidden" id="imageUrlRow">
+                    <input type="text" id="imageUrlInput" class="url-input" placeholder="https://example.com/image.jpg" disabled />
+                </div>
+                <div class="message-input-row hidden" id="imageCaptionRow">
+                    <input type="text" id="imageCaptionInput" placeholder="Image caption..." disabled />
+                    <button class="btn btn-primary" id="sendImageBtn" disabled>Send Image</button>
+                </div>
+
+                <!-- Video Message Inputs -->
+                <div class="message-input-row hidden" id="videoUrlRow">
+                    <input type="text" id="videoUrlInput" class="url-input" placeholder="https://example.com/video.mp4" disabled />
+                </div>
+                <div class="message-input-row hidden" id="videoCaptionRow">
+                    <input type="text" id="videoCaptionInput" placeholder="Video caption..." disabled />
+                    <button class="btn btn-primary" id="sendVideoBtn" disabled>Send Video</button>
+                </div>
+            </div>
         </div>
     </div>
 </div>
@@ -325,8 +426,10 @@
         constructor() {
             this.stompClient = null;
             this.isConnected = false;
+            this.currentMessageType = 'TEXT';
             this.initializeElements();
             this.attachEventListeners();
+            this.updateMessageInputs();
         }
 
         initializeElements() {
@@ -339,8 +442,28 @@
             this.statusIndicator = document.getElementById('statusIndicator');
             this.statusText = document.getElementById('statusText');
             this.messagesContainer = document.getElementById('messages');
-            this.messageInput = document.getElementById('messageInput');
+
+            // Message type selector
+            this.messageTypeSelect = document.getElementById('messageType');
+
+            // Text inputs
+            this.textInputRow = document.getElementById('textInputRow');
+            this.textInput = document.getElementById('textInput');
             this.sendBtn = document.getElementById('sendBtn');
+
+            // Image inputs
+            this.imageUrlRow = document.getElementById('imageUrlRow');
+            this.imageCaptionRow = document.getElementById('imageCaptionRow');
+            this.imageUrlInput = document.getElementById('imageUrlInput');
+            this.imageCaptionInput = document.getElementById('imageCaptionInput');
+            this.sendImageBtn = document.getElementById('sendImageBtn');
+
+            // Video inputs
+            this.videoUrlRow = document.getElementById('videoUrlRow');
+            this.videoCaptionRow = document.getElementById('videoCaptionRow');
+            this.videoUrlInput = document.getElementById('videoUrlInput');
+            this.videoCaptionInput = document.getElementById('videoCaptionInput');
+            this.sendVideoBtn = document.getElementById('sendVideoBtn');
         }
 
         attachEventListeners() {
@@ -356,22 +479,83 @@
                 this.refreshHistory();
             });
 
-            this.sendBtn.addEventListener('click', () => {
-                this.sendMessage();
+            // Message type selector
+            this.messageTypeSelect.addEventListener('change', (e) => {
+                this.currentMessageType = e.target.value;
+                this.updateMessageInputs();
             });
 
-            this.messageInput.addEventListener('keypress', (e) => {
+            // Text message
+            this.sendBtn.addEventListener('click', () => {
+                this.sendTextMessage();
+            });
+
+            this.textInput.addEventListener('keypress', (e) => {
                 if (e.key === 'Enter' && !e.shiftKey) {
                     e.preventDefault();
-                    this.sendMessage();
+                    this.sendTextMessage();
                 }
             });
 
-            this.messageInput.addEventListener('focus', () => {
-                if (this.isConnected) {
-                    this.messageInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            // Image message
+            this.sendImageBtn.addEventListener('click', () => {
+                this.sendImageMessage();
+            });
+
+            this.imageCaptionInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    this.sendImageMessage();
                 }
             });
+
+            // Video message
+            this.sendVideoBtn.addEventListener('click', () => {
+                this.sendVideoMessage();
+            });
+
+            this.videoCaptionInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    this.sendVideoMessage();
+                }
+            });
+
+            // Focus handling
+            [this.textInput, this.imageCaptionInput, this.videoCaptionInput].forEach(input => {
+                input.addEventListener('focus', () => {
+                    if (this.isConnected) {
+                        input.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }
+                });
+            });
+        }
+
+        updateMessageInputs() {
+            // Hide all input rows
+            this.textInputRow.classList.add('hidden');
+            this.imageUrlRow.classList.add('hidden');
+            this.imageCaptionRow.classList.add('hidden');
+            this.videoUrlRow.classList.add('hidden');
+            this.videoCaptionRow.classList.add('hidden');
+
+            // Show relevant inputs based on message type
+            switch (this.currentMessageType) {
+                case 'TEXT':
+                    this.textInputRow.classList.remove('hidden');
+                    if (this.isConnected) this.textInput.focus();
+                    break;
+                case 'IMAGE':
+                    this.imageUrlRow.classList.remove('hidden');
+                    this.imageCaptionRow.classList.remove('hidden');
+                    if (this.isConnected) this.imageCaptionInput.focus();
+                    break;
+                case 'VIDEO':
+                    this.videoUrlRow.classList.remove('hidden');
+                    this.videoCaptionRow.classList.remove('hidden');
+                    if (this.isConnected) this.videoCaptionInput.focus();
+                    break;
+            }
         }
 
         async connect() {
@@ -401,7 +585,7 @@
 
             try {
                 // Create SockJS connection with JWT token as query parameter
-                const socketUrl = `https://tutorswap.190304.xyz/ws?token=${encodeURIComponent(jwtToken)}`;
+                const socketUrl = `http://localhost:8080/ws?token=${encodeURIComponent(jwtToken)}`;
                 const socket = new SockJS(socketUrl);
                 this.stompClient = Stomp.over(socket);
 
@@ -419,9 +603,8 @@
 
                         this.connectBtn.disabled = true;
                         this.disconnectBtn.disabled = false;
-                        this.messageInput.disabled = false;
-                        this.sendBtn.disabled = false;
-                        this.messageInput.focus();
+                        this.enableMessageInputs();
+                        this.updateMessageInputs();
 
                         this.subscribeToChat(chatId);
                     },
@@ -448,11 +631,33 @@
             }
         }
 
+        enableMessageInputs() {
+            this.textInput.disabled = false;
+            this.sendBtn.disabled = false;
+            this.imageUrlInput.disabled = false;
+            this.imageCaptionInput.disabled = false;
+            this.sendImageBtn.disabled = false;
+            this.videoUrlInput.disabled = false;
+            this.videoCaptionInput.disabled = false;
+            this.sendVideoBtn.disabled = false;
+        }
+
+        disableMessageInputs() {
+            this.textInput.disabled = true;
+            this.sendBtn.disabled = true;
+            this.imageUrlInput.disabled = true;
+            this.imageCaptionInput.disabled = true;
+            this.sendImageBtn.disabled = true;
+            this.videoUrlInput.disabled = true;
+            this.videoCaptionInput.disabled = true;
+            this.sendVideoBtn.disabled = true;
+        }
+
         async loadChatHistory(chatId, jwtToken) {
             try {
                 this.addSystemMessage('Loading chat history...');
 
-                const response = await fetch(`https://tutorswap.190304.xyz/api/v1/chats/${chatId}`, {
+                const response = await fetch(`http://localhost:8080/api/v1/chats/${chatId}`, {
                     method: 'GET',
                     headers: {
                         'Authorization': `Bearer ${jwtToken}`,
@@ -499,17 +704,38 @@
             let messageText = '';
             let messageType = 'received';
             let timestamp = '';
+            let msgType = 'TEXT';
 
+            // Extract message content and type
             if (typeof message === 'string') {
                 messageText = message;
-            } else if (message.content || message.text || message.body) {
-                messageText = message.content || message.text || message.body;
-            } else if (message.message) {
-                messageText = message.message;
             } else {
-                messageText = JSON.stringify(message);
+                // Check for message type
+                if (message.messageType) {
+                    msgType = message.messageType;
+                }
+
+                // Extract content based on message type
+                if (msgType === 'IMAGE' && message.imageUrl) {
+                    messageText = `📷 Image: ${message.imageUrl}`;
+                    if (message.caption) {
+                        messageText += `\nCaption: ${message.caption}`;
+                    }
+                } else if (msgType === 'VIDEO' && message.videoUrl) {
+                    messageText = `🎥 Video: ${message.videoUrl}`;
+                    if (message.caption) {
+                        messageText += `\nCaption: ${message.caption}`;
+                    }
+                } else if (message.content || message.text || message.body) {
+                    messageText = message.content || message.text || message.body;
+                } else if (message.message) {
+                    messageText = message.message;
+                } else {
+                    messageText = JSON.stringify(message);
+                }
             }
 
+            // Extract timestamp
             if (message.timestamp) {
                 timestamp = new Date(message.timestamp).toLocaleString();
             } else if (message.createdAt) {
@@ -522,10 +748,14 @@
 
             messageDiv.className = `message ${messageType}`;
             messageDiv.style.opacity = '0.8';
+
+            const typeBadge = msgType !== 'TEXT' ? `<div class="message-type-badge ${msgType.toLowerCase()}">${msgType}</div>` : '';
+
             messageDiv.innerHTML = `
-                    <div>${this.escapeHtml(messageText)}</div>
-                    <small style="opacity: 0.7; font-size: 0.8em;">${timestamp}</small>
-                `;
+                ${typeBadge}
+                <div>${this.escapeHtml(messageText)}</div>
+                <small style="opacity: 0.7; font-size: 0.8em;">${timestamp}</small>
+            `;
 
             this.messagesContainer.appendChild(messageDiv);
         }
@@ -573,15 +803,71 @@
             this.updateStatus('disconnected', 'Disconnected');
             this.connectBtn.disabled = false;
             this.disconnectBtn.disabled = true;
-            this.messageInput.disabled = true;
-            this.sendBtn.disabled = true;
-            this.messageInput.value = '';
+            this.disableMessageInputs();
+            this.clearInputs();
         }
 
-        sendMessage() {
-            const message = this.messageInput.value.trim();
+        clearInputs() {
+            this.textInput.value = '';
+            this.imageUrlInput.value = '';
+            this.imageCaptionInput.value = '';
+            this.videoUrlInput.value = '';
+            this.videoCaptionInput.value = '';
+        }
+
+        sendTextMessage() {
+            const message = this.textInput.value.trim();
             if (!message || !this.isConnected || !this.stompClient) return;
 
+            this.sendMessage({
+                messageType: "TEXT",
+                content: message
+            });
+
+            this.addMessage(message, 'sent', 'TEXT');
+            this.textInput.value = '';
+            this.textInput.focus();
+        }
+
+        sendImageMessage() {
+            const imageUrl = this.imageUrlInput.value.trim();
+            const caption = this.imageCaptionInput.value.trim();
+
+            if (!caption || !this.isConnected || !this.stompClient) return;
+
+            const finalImageUrl = imageUrl || 'https://via.placeholder.com/300x200/4facfe/ffffff?text=Sample+Image';
+
+            this.sendMessage({
+                messageType: "IMAGE",
+                imageUrl: finalImageUrl,
+                caption: caption
+            });
+
+            this.addMessage(`📷 Image: ${finalImageUrl}\nCaption: ${caption}`, 'sent', 'IMAGE');
+            this.imageCaptionInput.value = '';
+            this.imageCaptionInput.focus();
+        }
+
+        sendVideoMessage() {
+            const videoUrl = this.videoUrlInput.value.trim();
+            const caption = this.videoCaptionInput.value.trim();
+
+            if (!caption || !this.isConnected || !this.stompClient) return;
+
+            const finalVideoUrl = videoUrl || 'https://sample-videos.com/zip/10/mp4/SampleVideo_1280x720_1mb.mp4';
+
+            this.sendMessage({
+                messageType: "VIDEO",
+                videoUrl: finalVideoUrl,
+                caption: caption
+            });
+
+            this.addMessage(`🎥 Video: ${finalVideoUrl}\nCaption: ${caption}`, 'sent', 'VIDEO');
+            this.videoCaptionInput.value = '';
+            this.videoCaptionInput.focus();
+        }
+
+        sendMessage(messageData) {
             try {
                 const chatId = this.chatIdInput.value.trim();
                 const receiverId = this.receiverIdInput.value.trim();
@@ -590,16 +876,12 @@
                 const messageRequest = {
                     chatId: chatId,
                     receiverId: receiverId,
-                    messageType: "TEXT",
-                    content: message
+                    ...messageData
                 };
 
                 // Send message through STOMP to your backend endpoint
                 this.stompClient.send('/app/chat.sendMessage', {}, JSON.stringify(messageRequest));
 
-                this.addMessage(message, 'sent');
-                this.messageInput.value = '';
-                this.messageInput.focus();
             } catch (error) {
                 console.error('Failed to send message:', error);
                 this.addSystemMessage('Failed to send message');
@@ -609,66 +891,21 @@
         handleMessage(data) {
             try {
                 const message = JSON.parse(data);
+                let messageText = '';
+                let messageType = 'TEXT';
 
-                if (message.content) {
-                    this.addMessage(message.content, 'received');
-                } else if (message.body) {
-                    this.addMessage(message.body, 'received');
-                } else if (message.message) {
-                    this.addMessage(message.message, 'received');
-                } else {
-                    this.addMessage(data, 'received');
+                if (message.messageType) {
+                    messageType = message.messageType;
                 }
-            } catch (error) {
-                this.addMessage(data, 'received');
-            }
-        }
 
-        addMessage(text, type) {
-            const messageDiv = document.createElement('div');
-            messageDiv.className = `message ${type}`;
-
-            const timestamp = new Date().toLocaleTimeString();
-            messageDiv.innerHTML = `
-                    <div>${this.escapeHtml(text)}</div>
-                    <small style="opacity: 0.7; font-size: 0.8em;">${timestamp}</small>
-                `;
-
-            this.messagesContainer.appendChild(messageDiv);
-            this.scrollToBottom();
-        }
-
-        addSystemMessage(text) {
-            const messageDiv = document.createElement('div');
-            messageDiv.className = 'message system';
-            messageDiv.innerHTML = `
-                    <div>${this.escapeHtml(text)}</div>
-                    <small style="opacity: 0.7; font-size: 0.8em;">${new Date().toLocaleTimeString()}</small>
-                `;
-
-            this.messagesContainer.appendChild(messageDiv);
-            this.scrollToBottom();
-        }
-
-        updateStatus(status, text) {
-            this.statusIndicator.className = `status-indicator ${status}`;
-            this.statusText.textContent = text;
-        }
-
-        scrollToBottom() {
-            this.messagesContainer.scrollTop = this.messagesContainer.scrollHeight;
-        }
-
-        escapeHtml(text) {
-            const div = document.createElement('div');
-            div.textContent = text;
-            return div.innerHTML;
-        }
-    }
-
-    document.addEventListener('DOMContentLoaded', () => {
-        new WebSocketTester();
-    });
-</script>
-</body>
-</html>
+                if (messageType === 'IMAGE' && message.imageUrl) {
+                    messageText = `📷 Image: ${message.imageUrl}`;
+                    if (message.caption) {
+                        messageText += `\nCaption: ${message.caption}`;
+                    }
+                } else if (messageType === 'VIDEO' && message.videoUrl) {
+                    messageText = `🎥 Video: ${message.videoUrl}`;
+                    if (message.caption) {
+                        messageText += `\nCaption: ${message.caption}`;
+                    }
+                } else if (message.content) {
