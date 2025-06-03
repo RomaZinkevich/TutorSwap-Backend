@@ -29,8 +29,8 @@ public class ChatController {
             @Payload MessageRequest messageRequest,
             SimpMessageHeaderAccessor headerAccessor
     ) {
-        UUID senderId = (UUID) headerAccessor.getSessionAttributes().get("id");
-        String chatId = String.valueOf(messageRequest.getChatId());
+        UUID senderId = UUID.fromString((String) headerAccessor.getSessionAttributes().get("id"));
+        UUID chatId = messageRequest.getChatId();
         MessageDto messageDto;
         if (messageRequest instanceof TextMessageRequest text) {
             BaseMessage baseMessage = messageService.saveTextMessage(text, senderId);

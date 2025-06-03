@@ -15,6 +15,6 @@ public class ErrorMessageDto {
     private String type = "error";
     private String message;
     private UUID senderId;
-    private String chatId;
+    private UUID chatId;
     private long timestamp = System.currentTimeMillis();
 }

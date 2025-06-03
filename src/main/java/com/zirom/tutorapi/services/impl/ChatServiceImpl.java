@@ -53,7 +53,7 @@ public class ChatServiceImpl implements ChatService {
             User user = chat.getSenderUser().getId().equals(userId) ? chat.getReceiverUser() : chat.getSenderUser();
             OtherUserDto userDto = userMapper.toOthersDto(user);
             ChatDto chatDto = chatMapper.toDto(chat);
-            BaseMessage lastMessage = baseMessageRepository.findBaseMessageByChat_IdOrderByTimestampDesc(chat.getId());
+            BaseMessage lastMessage = baseMessageRepository.findTopByChat_IdOrderByTimestampDesc(chat.getId());
             MessageDto lastMessageDto = messageMapper.toDto(lastMessage, userId);
             boolean isLearner = chat.getSenderUser().getId().equals(userId);
 

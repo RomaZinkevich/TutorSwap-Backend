@@ -10,7 +10,7 @@ import java.util.UUID;
 public interface BaseMessageRepository extends JpaRepository<BaseMessage, UUID> {
 
     //Get last message from the chat
-    BaseMessage findBaseMessageByChat_IdOrderByTimestampDesc(UUID chatId);
+    BaseMessage findTopByChat_IdOrderByTimestampDesc(UUID chatId);
 
     List<BaseMessage> findAllByChat_IdOrderByTimestampAsc(UUID chatId);
 }

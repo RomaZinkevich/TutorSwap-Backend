@@ -29,6 +29,5 @@ public abstract class MessageDto {
     private UUID id;
     private MessageType messageType;
     private LocalDateTime timestamp;
-    @JsonProperty("isSender")
-    private boolean isSender;
+    private UUID senderId;
 }

@@ -40,7 +40,7 @@ public class MessageServiceImpl implements MessageService {
 
     @Override
     public BaseMessage getLastMessageByChatId(UUID chatId) {
-        return baseMessageRepository.findBaseMessageByChat_IdOrderByTimestampDesc(chatId);
+        return baseMessageRepository.findTopByChat_IdOrderByTimestampDesc(chatId);
     }
 
     @Override
