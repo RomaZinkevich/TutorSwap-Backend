@@ -1,16 +1,11 @@
 package com.zirom.tutorapi.mappers;
 
-import com.zirom.tutorapi.domain.dtos.chat.messages.ImageMessageDto;
-import com.zirom.tutorapi.domain.dtos.chat.messages.MessageDto;
-import com.zirom.tutorapi.domain.dtos.chat.messages.TextMessageDto;
-import com.zirom.tutorapi.domain.dtos.chat.messages.VideoMessageDto;
+import com.zirom.tutorapi.domain.dtos.chat.messages.*;
 import com.zirom.tutorapi.domain.entities.Chat;
 import com.zirom.tutorapi.domain.entities.User;
-import com.zirom.tutorapi.domain.entities.messages.BaseMessage;
-import com.zirom.tutorapi.domain.entities.messages.ImageMessage;
-import com.zirom.tutorapi.domain.entities.messages.TextMessage;
-import com.zirom.tutorapi.domain.entities.messages.VideoMessage;
+import com.zirom.tutorapi.domain.entities.messages.*;
 import com.zirom.tutorapi.repositories.messages.ImageMessageRepository;
+import com.zirom.tutorapi.repositories.messages.ScheduleMessageRepository;
 import com.zirom.tutorapi.repositories.messages.TextMessageRepository;
 import com.zirom.tutorapi.repositories.messages.VideoMessageRepository;
 import lombok.RequiredArgsConstructor;
@@ -24,8 +19,6 @@ public class MessageMapper {
     private final TextMessageRepository textMessageRepository;
     private final ImageMessageRepository imageMessageRepository;
     private final VideoMessageRepository videoMessageRepository;
-    private final ChatMapper chatMapper;
-    private final UserMapper userMapper;
 
     public MessageDto toDto(BaseMessage message, UUID loggedInUserId) {
         MessageDto dto;
@@ -52,6 +45,10 @@ public class MessageMapper {
                 vidDto.setVideoUrl(vid.getVideoUrl());
                 vidDto.setCaption(vid.getCaption());
                 dto = vidDto;
+                break;
+
+            case SCHEDULE:
+                dto = new ScheduleMessageDto();
                 break;
 
             default:

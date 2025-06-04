@@ -3,14 +3,18 @@ package com.zirom.tutorapi.services.impl;
 import com.zirom.tutorapi.domain.MessageType;
 import com.zirom.tutorapi.domain.dtos.chat.messages.requests.ImageMessageRequest;
 import com.zirom.tutorapi.domain.dtos.chat.messages.requests.MessageRequest;
+import com.zirom.tutorapi.domain.dtos.chat.messages.requests.ScheduleMessageRequest;
 import com.zirom.tutorapi.domain.dtos.chat.messages.requests.TextMessageRequest;
 import com.zirom.tutorapi.domain.entities.Chat;
 import com.zirom.tutorapi.domain.entities.User;
 import com.zirom.tutorapi.domain.entities.messages.BaseMessage;
 import com.zirom.tutorapi.domain.entities.messages.ImageMessage;
+import com.zirom.tutorapi.domain.entities.messages.ScheduleMessage;
 import com.zirom.tutorapi.domain.entities.messages.TextMessage;
+import com.zirom.tutorapi.repositories.ScheduleRepository;
 import com.zirom.tutorapi.repositories.messages.BaseMessageRepository;
 import com.zirom.tutorapi.repositories.messages.ImageMessageRepository;
+import com.zirom.tutorapi.repositories.messages.ScheduleMessageRepository;
 import com.zirom.tutorapi.repositories.messages.TextMessageRepository;
 import com.zirom.tutorapi.services.AuthorizationService;
 import com.zirom.tutorapi.services.ChatService;
@@ -30,9 +34,10 @@ public class MessageServiceImpl implements MessageService {
 
     private final BaseMessageRepository baseMessageRepository;
     private final TextMessageRepository textMessageRepository;
+    private final ImageMessageRepository imageMessageRepository;
+    private final ScheduleMessageRepository scheduleMessageRepository;
     private final UserService userService;
     private final ChatService chatService;
-    private final ImageMessageRepository imageMessageRepository;
 
     @Override
     @Transactional
@@ -49,6 +54,7 @@ public class MessageServiceImpl implements MessageService {
 
         if (messageRequest instanceof TextMessageRequest text) saveTextMessage(savedMessage, text.getContent());
         if (messageRequest instanceof ImageMessageRequest image) saveImageMessage(savedMessage, image);
+        if (messageRequest instanceof ScheduleMessageRequest) saveScheduleMessage(savedMessage);
 
         return savedMessage;
     }
@@ -67,5 +73,11 @@ public class MessageServiceImpl implements MessageService {
         imageMessage.setImageUrl(image.getImageUrl());
         imageMessage.setCaption(image.getCaption());
         imageMessageRepository.save(imageMessage);
+    }
+
+    private void saveScheduleMessage(BaseMessage messageRequest) {
+        ScheduleMessage scheduleMessage = new ScheduleMessage();
+        scheduleMessage.setMessage(messageRequest);
+        scheduleMessageRepository.save(scheduleMessage);
     }
 }
