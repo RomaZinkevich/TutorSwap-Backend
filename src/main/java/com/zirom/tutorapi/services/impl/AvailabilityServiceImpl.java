@@ -58,7 +58,6 @@ public class AvailabilityServiceImpl implements AvailabilityService {
     public AvailabilitySchedule getAvailabilitySchedule(UUID userId) {
         List<Schedule> schedules = scheduleRepository.findAllByUser_Id(userId);
         Preference preference = preferenceRepository.findByUser_Id(userId).orElseThrow(EntityNotFoundException::new);
-        if (schedules.isEmpty()) throw new EntityNotFoundException("Schedule not found");
         AvailabilitySchedule ownAvailability = new AvailabilitySchedule();
         ownAvailability.setPreference(preference);
         ownAvailability.setSchedules(schedules);
