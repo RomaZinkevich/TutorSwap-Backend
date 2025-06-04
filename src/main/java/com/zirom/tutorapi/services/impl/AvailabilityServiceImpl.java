@@ -57,10 +57,13 @@ public class AvailabilityServiceImpl implements AvailabilityService {
     @Override
     public AvailabilitySchedule getAvailabilitySchedule(UUID userId) {
         List<Schedule> schedules = scheduleRepository.findAllByUser_Id(userId);
+        List<Duration> durations = durationRepository.findAllByUser_Id(userId);
+        if (durations.isEmpty()) throw new EntityNotFoundException("Duration not found");
         Preference preference = preferenceRepository.findByUser_Id(userId).orElseThrow(EntityNotFoundException::new);
         AvailabilitySchedule ownAvailability = new AvailabilitySchedule();
         ownAvailability.setPreference(preference);
         ownAvailability.setSchedules(schedules);
+        ownAvailability.setDurations(durations);
         return ownAvailability;
     }
 
@@ -70,20 +73,26 @@ public class AvailabilityServiceImpl implements AvailabilityService {
         User user = userService.findById(userId).orElseThrow(EntityNotFoundException::new);
         Optional<Preference> oldPreference = preferenceRepository.findByUser_Id(userId);
         List<Schedule> oldSchedules = scheduleRepository.findAllByUser_Id(userId);
+        List<Duration> oldDurations = durationRepository.findAllByUser_Id(userId);
         Preference newPreference = availabilitySchedule.getPreference();
         newPreference.setUser(user);
         List<Schedule> newSchedules = availabilitySchedule.getSchedules();
         newSchedules.forEach(schedule -> {schedule.setUser(user);});
+        List<Duration> newDurations = availabilitySchedule.getDurations();
+        newDurations.forEach(duration -> {duration.setUser(user);});
 
         Preference preference = createPreference(newPreference);
         List<Schedule> schedules = createSchedules(newSchedules);
+        List<Duration> durations = createDurations(newDurations);
 
         oldPreference.ifPresent(preferenceRepository::delete);
-        oldSchedules.forEach(scheduleRepository::delete);
+        scheduleRepository.deleteAll(oldSchedules);
+        durationRepository.deleteAll(oldDurations);
 
         AvailabilitySchedule newSchedule = new AvailabilitySchedule();
         newSchedule.setPreference(preference);
         newSchedule.setSchedules(schedules);
+        newSchedule.setDurations(durations);
         return newSchedule;
     }
 }

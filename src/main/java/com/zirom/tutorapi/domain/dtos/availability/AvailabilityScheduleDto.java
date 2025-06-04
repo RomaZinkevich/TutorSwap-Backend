@@ -12,4 +12,5 @@ import java.util.List;
 public class AvailabilityScheduleDto {
     private List<ScheduleDto> schedules;
     private PreferenceDto preference;
+    private List<DurationDto> durations;
 }

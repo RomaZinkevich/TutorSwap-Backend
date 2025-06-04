@@ -10,6 +10,7 @@ import com.zirom.tutorapi.services.AvailabilityService;
 import com.zirom.tutorapi.services.UserService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -49,7 +50,7 @@ public class AvailabilityController {
     @SecurityRequirement(name = "BearerAuth")
     public ResponseEntity<AvailabilityScheduleDto> updateOwnAvailability(
             Authentication authentication,
-            @RequestBody AvailabilityScheduleRequest request
+            @RequestBody @Valid AvailabilityScheduleRequest request
     ) {
         UserDto user = userService.getUserFromPrincipal((ApiUserDetails) authentication.getPrincipal());
         AvailabilitySchedule schedule = ownAvailabilityScheduleMapper.toEntity(request);

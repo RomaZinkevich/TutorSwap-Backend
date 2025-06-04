@@ -44,6 +44,17 @@ public class ErrorController {
         return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
     }
 
+    @ExceptionHandler(NullPointerException.class)
+    public ResponseEntity<ApiErrorResponse> handleNullPointerException(NullPointerException ex) {
+        log.error("Caught Exception", ex);
+
+        ApiErrorResponse error = ApiErrorResponse.builder()
+                .status(HttpStatus.BAD_REQUEST.value())
+                .message(ex.getMessage())
+                .build();
+        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+    }
+
     @ExceptionHandler(IllegalStateException.class)
     public ResponseEntity<ApiErrorResponse> handleIllegalStateException(IllegalStateException ex) {
         log.error("Caught Exception", ex);
