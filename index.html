@@ -228,6 +228,11 @@
             color: white;
         }
 
+        .message-type-badge.schedule {
+            background: #28a745;
+            color: white;
+        }
+
         .message-compose {
             border: 2px solid #e9ecef;
             border-radius: 15px;
@@ -387,6 +392,7 @@
                     <option value="TEXT">Text Message</option>
                     <option value="IMAGE">Image Message</option>
                     <option value="VIDEO">Video Message</option>
+                    <option value="SCHEDULE">Schedule Message</option>
                 </select>
             </div>
 
@@ -413,6 +419,14 @@
                 <div class="message-input-row hidden" id="videoCaptionRow">
                     <input type="text" id="videoCaptionInput" placeholder="Video caption..." disabled />
                     <button class="btn btn-primary" id="sendVideoBtn" disabled>Send Video</button>
+                </div>
+
+                <!-- Schedule Message Input -->
+                <div class="message-input-row hidden" id="scheduleRow">
+                    <div style="flex: 1; padding: 12px 15px; background: #f8f9fa; border: 2px solid #e9ecef; border-radius: 25px; color: #6c757d; font-style: italic;">
+                        📅 Check my schedule!
+                    </div>
+                    <button class="btn btn-primary" id="sendScheduleBtn" disabled>Send Schedule</button>
                 </div>
             </div>
         </div>
@@ -464,6 +478,10 @@
             this.videoUrlInput = document.getElementById('videoUrlInput');
             this.videoCaptionInput = document.getElementById('videoCaptionInput');
             this.sendVideoBtn = document.getElementById('sendVideoBtn');
+
+            // Schedule input
+            this.scheduleRow = document.getElementById('scheduleRow');
+            this.sendScheduleBtn = document.getElementById('sendScheduleBtn');
         }
 
         attachEventListeners() {
@@ -521,6 +539,11 @@
                 }
             });
 
+            // Schedule message
+            this.sendScheduleBtn.addEventListener('click', () => {
+                this.sendScheduleMessage();
+            });
+
             // Focus handling
             [this.textInput, this.imageCaptionInput, this.videoCaptionInput].forEach(input => {
                 input.addEventListener('focus', () => {
@@ -538,6 +561,7 @@
             this.imageCaptionRow.classList.add('hidden');
             this.videoUrlRow.classList.add('hidden');
             this.videoCaptionRow.classList.add('hidden');
+            this.scheduleRow.classList.add('hidden');
 
             // Show relevant inputs based on message type
             switch (this.currentMessageType) {
@@ -554,6 +578,9 @@
                     this.videoUrlRow.classList.remove('hidden');
                     this.videoCaptionRow.classList.remove('hidden');
                     if (this.isConnected) this.videoCaptionInput.focus();
+                    break;
+                case 'SCHEDULE':
+                    this.scheduleRow.classList.remove('hidden');
                     break;
             }
         }
@@ -640,6 +667,7 @@
             this.videoUrlInput.disabled = false;
             this.videoCaptionInput.disabled = false;
             this.sendVideoBtn.disabled = false;
+            this.sendScheduleBtn.disabled = false;
         }
 
         disableMessageInputs() {
@@ -651,6 +679,7 @@
             this.videoUrlInput.disabled = true;
             this.videoCaptionInput.disabled = true;
             this.sendVideoBtn.disabled = true;
+            this.sendScheduleBtn.disabled = true;
         }
 
         async loadChatHistory(chatId, jwtToken) {
@@ -726,6 +755,8 @@
                     if (message.caption) {
                         messageText += `\nCaption: ${message.caption}`;
                     }
+                } else if (msgType === 'SCHEDULE') {
+                    messageText = `📅 Check my schedule!`;
                 } else if (message.content || message.text || message.body) {
                     messageText = message.content || message.text || message.body;
                 } else if (message.message) {
@@ -867,6 +898,16 @@
             this.videoCaptionInput.focus();
         }
 
+        sendScheduleMessage() {
+            if (!this.isConnected || !this.stompClient) return;
+
+            this.sendMessage({
+                messageType: "SCHEDULE"
+            });
+
+            this.addMessage(`📅 Check my schedule!`, 'sent', 'SCHEDULE');
+        }
+
         sendMessage(messageData) {
             try {
                 const chatId = this.chatIdInput.value.trim();
@@ -908,6 +949,8 @@
                     if (message.caption) {
                         messageText += `\nCaption: ${message.caption}`;
                     }
+                } else if (messageType === 'SCHEDULE') {
+                    messageText = `📅 Check my schedule!`;
                 } else if (message.content) {
                     messageText = message.content;
                 } else if (message.body) {

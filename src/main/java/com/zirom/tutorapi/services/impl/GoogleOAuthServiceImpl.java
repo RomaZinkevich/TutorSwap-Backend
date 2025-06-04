@@ -37,6 +37,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.security.Key;
 import java.time.DayOfWeek;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.*;
 
@@ -151,43 +152,43 @@ public class GoogleOAuthServiceImpl implements GoogleOAuthService {
         Schedule monSched = new Schedule();
         monSched.setUser(user);
         monSched.setDayOfWeek(DayOfWeek.MONDAY);
-        monSched.setStartTime(LocalTime.of(9, 0));
-        monSched.setEndTime(LocalTime.of(18, 0));
+        monSched.setStartTime(LocalDateTime.of(2001, 9, 11, 8, 0, 0));
+        monSched.setEndTime(LocalDateTime.of(2001, 9, 11, 18, 0, 0));
         schedules.add(monSched);
 
         Schedule tueSched = new Schedule();
         tueSched.setUser(user);
         tueSched.setDayOfWeek(DayOfWeek.TUESDAY);
-        tueSched.setStartTime(LocalTime.of(10, 0));
-        tueSched.setEndTime(LocalTime.of(18, 0));
+        tueSched.setStartTime(LocalDateTime.of(2001, 9, 11, 10, 0, 0));
+        tueSched.setEndTime(LocalDateTime.of(2001, 9, 11, 18, 0, 0));
         schedules.add(tueSched);
 
         Schedule wedSched = new Schedule();
         wedSched.setUser(user);
         wedSched.setDayOfWeek(DayOfWeek.WEDNESDAY);
-        wedSched.setStartTime(LocalTime.of(10, 0));
-        wedSched.setEndTime(LocalTime.of(17, 0));
+        wedSched.setStartTime(LocalDateTime.of(2001, 9, 11, 10, 0, 0));
+        wedSched.setEndTime(LocalDateTime.of(2001, 9, 11, 17, 0, 0));
         schedules.add(wedSched);
 
         Schedule thursMornSched = new Schedule();
         thursMornSched.setUser(user);
         thursMornSched.setDayOfWeek(DayOfWeek.THURSDAY);
-        thursMornSched.setStartTime(LocalTime.of(8, 0));
-        thursMornSched.setEndTime(LocalTime.of(10, 0));
+        thursMornSched.setStartTime(LocalDateTime.of(2001, 9, 11, 8, 0, 0));
+        thursMornSched.setEndTime(LocalDateTime.of(2001, 9, 11, 10, 0, 0));
         schedules.add(thursMornSched);
 
         Schedule thursAfternoonSched = new Schedule();
         thursAfternoonSched.setUser(user);
         thursAfternoonSched.setDayOfWeek(DayOfWeek.THURSDAY);
-        thursAfternoonSched.setStartTime(LocalTime.of(13, 0));
-        thursAfternoonSched.setEndTime(LocalTime.of(18, 0));
+        thursAfternoonSched.setStartTime(LocalDateTime.of(2001, 9, 11, 13, 0, 0));
+        thursAfternoonSched.setEndTime(LocalDateTime.of(2001, 9, 11, 18, 0, 0));
         schedules.add(thursAfternoonSched);
 
         Schedule friSched = new Schedule();
         friSched.setUser(user);
         friSched.setDayOfWeek(DayOfWeek.FRIDAY);
-        friSched.setStartTime(LocalTime.of(12, 0));
-        friSched.setEndTime(LocalTime.of(15, 0));
+        friSched.setStartTime(LocalDateTime.of(2001, 9, 11, 12, 0, 0));
+        friSched.setEndTime(LocalDateTime.of(2001, 9, 11, 15, 0, 0));
         schedules.add(friSched);
 
         availabilityService.createSchedules(schedules);

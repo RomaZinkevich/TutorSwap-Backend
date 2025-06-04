@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.DayOfWeek;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 @Data
@@ -18,8 +19,8 @@ public class ScheduleRequest {
     private DayOfWeek dayOfWeek;
 
     @NotNull(message = "Start time must be provided")
-    private LocalTime startTime;
+    private LocalDateTime startTime;
 
     @NotNull(message = "End time must be provided")
-    private LocalTime endTime;
+    private LocalDateTime endTime;
 }

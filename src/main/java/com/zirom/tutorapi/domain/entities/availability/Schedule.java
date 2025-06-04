@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.DayOfWeek;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.UUID;
 
@@ -29,9 +30,9 @@ public class Schedule {
     private DayOfWeek dayOfWeek;
 
     @Column(nullable = false)
-    private LocalTime startTime;
+    private LocalDateTime startTime;
 
     @Column(nullable = false)
-    private LocalTime endTime;
+    private LocalDateTime endTime;
 
 }
