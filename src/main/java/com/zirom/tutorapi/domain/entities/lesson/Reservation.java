@@ -28,9 +28,9 @@ public class Reservation {
     private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false,
+    @JoinColumn(name = "learner_id", nullable = false,
             foreignKey = @ForeignKey(name = "fk_reservation_learner",
-                    foreignKeyDefinition = "FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE"))
+                    foreignKeyDefinition = "FOREIGN KEY (learner_id) REFERENCES users(id) ON DELETE CASCADE"))
     private User learner;
 
     @Column(nullable = false)
