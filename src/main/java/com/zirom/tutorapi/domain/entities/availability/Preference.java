@@ -20,7 +20,9 @@ public class Preference {
     private UUID id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
+    @JoinColumn(name = "user_id", nullable = false,
+            foreignKey = @ForeignKey(name = "fk_preference_user",
+                    foreignKeyDefinition = "FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE"))
     private User user;
 
     @NotNull

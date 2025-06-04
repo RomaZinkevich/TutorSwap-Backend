@@ -36,7 +36,6 @@ public class BaseMessage {
                     foreignKeyDefinition = "FOREIGN KEY (chat_id) REFERENCES chats(id) ON DELETE CASCADE"))
     private Chat chat;
 
-    // Remove JPA cascade - we'll use database cascade instead
     @OneToOne(mappedBy = "message", fetch = FetchType.LAZY)
     private ImageMessage imageMessage;
 
