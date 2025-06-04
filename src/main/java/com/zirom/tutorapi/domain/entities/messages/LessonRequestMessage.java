@@ -3,6 +3,7 @@ package com.zirom.tutorapi.domain.entities.messages;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
@@ -27,10 +28,8 @@ public class LessonRequestMessage {
     private String description;
 
     @Column(nullable = false)
-    private boolean approved;
+    private LocalDateTime timeStart;
 
-    @PrePersist
-    protected void onCreate() {
-        this.approved = false;
-    }
+    @Column(nullable = false)
+    private LocalDateTime timeEnd;
 }

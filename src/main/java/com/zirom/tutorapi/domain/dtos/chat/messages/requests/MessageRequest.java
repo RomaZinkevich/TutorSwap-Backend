@@ -27,7 +27,8 @@ import java.util.UUID;
         @JsonSubTypes.Type(value = TextMessageRequest.class, name = "TEXT"),
         @JsonSubTypes.Type(value = ImageMessageRequest.class, name = "IMAGE"),
         @JsonSubTypes.Type(value = VideoMessageRequest.class, name = "VIDEO"),
-        @JsonSubTypes.Type(value = ScheduleMessageRequest.class, name = "SCHEDULE")
+        @JsonSubTypes.Type(value = ScheduleMessageRequest.class, name = "SCHEDULE"),
+        @JsonSubTypes.Type(value = LessonRequestMessageRequest.class, name = "LESSON")
 })
 public abstract class MessageRequest {
     @NotNull(message = "chat id is required")

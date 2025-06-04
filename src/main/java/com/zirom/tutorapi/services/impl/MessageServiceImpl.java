@@ -1,25 +1,13 @@
 package com.zirom.tutorapi.services.impl;
 
 import com.zirom.tutorapi.domain.MessageType;
-import com.zirom.tutorapi.domain.dtos.chat.messages.requests.ImageMessageRequest;
-import com.zirom.tutorapi.domain.dtos.chat.messages.requests.MessageRequest;
-import com.zirom.tutorapi.domain.dtos.chat.messages.requests.ScheduleMessageRequest;
-import com.zirom.tutorapi.domain.dtos.chat.messages.requests.TextMessageRequest;
+import com.zirom.tutorapi.domain.dtos.chat.messages.requests.*;
 import com.zirom.tutorapi.domain.entities.Chat;
 import com.zirom.tutorapi.domain.entities.User;
-import com.zirom.tutorapi.domain.entities.messages.BaseMessage;
-import com.zirom.tutorapi.domain.entities.messages.ImageMessage;
-import com.zirom.tutorapi.domain.entities.messages.ScheduleMessage;
-import com.zirom.tutorapi.domain.entities.messages.TextMessage;
+import com.zirom.tutorapi.domain.entities.messages.*;
 import com.zirom.tutorapi.repositories.ScheduleRepository;
-import com.zirom.tutorapi.repositories.messages.BaseMessageRepository;
-import com.zirom.tutorapi.repositories.messages.ImageMessageRepository;
-import com.zirom.tutorapi.repositories.messages.ScheduleMessageRepository;
-import com.zirom.tutorapi.repositories.messages.TextMessageRepository;
-import com.zirom.tutorapi.services.AuthorizationService;
-import com.zirom.tutorapi.services.ChatService;
-import com.zirom.tutorapi.services.MessageService;
-import com.zirom.tutorapi.services.UserService;
+import com.zirom.tutorapi.repositories.messages.*;
+import com.zirom.tutorapi.services.*;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.AccessDeniedException;
@@ -27,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.UUID;
+import java.time.LocalDateTime;
 
 @Service
 @RequiredArgsConstructor
@@ -38,6 +27,8 @@ public class MessageServiceImpl implements MessageService {
     private final ScheduleMessageRepository scheduleMessageRepository;
     private final UserService userService;
     private final ChatService chatService;
+    private final LessonRequestMessageRepository lessonRequestMessageRepository;
+    private final ReservationService reservationService;
 
     @Override
     @Transactional
@@ -55,6 +46,7 @@ public class MessageServiceImpl implements MessageService {
         if (messageRequest instanceof TextMessageRequest text) saveTextMessage(savedMessage, text.getContent());
         if (messageRequest instanceof ImageMessageRequest image) saveImageMessage(savedMessage, image);
         if (messageRequest instanceof ScheduleMessageRequest) saveScheduleMessage(savedMessage);
+        if (messageRequest instanceof LessonRequestMessageRequest lessonRequest) saveLessonRequestMessage(savedMessage, lessonRequest);
 
         return savedMessage;
     }
@@ -79,5 +71,21 @@ public class MessageServiceImpl implements MessageService {
         ScheduleMessage scheduleMessage = new ScheduleMessage();
         scheduleMessage.setMessage(messageRequest);
         scheduleMessageRepository.save(scheduleMessage);
+    }
+
+    private void saveLessonRequestMessage(BaseMessage messageRequest, LessonRequestMessageRequest lessonRequest) {
+        LocalDateTime timeStart = lessonRequest.getTimeStart();
+        LocalDateTime timeEnd = lessonRequest.getTimeEnd();
+
+        LessonRequestMessage requestMessage = new LessonRequestMessage();
+        requestMessage.setMessage(messageRequest);
+        requestMessage.setDescription(lessonRequest.getDescription());
+        requestMessage.setTimeStart(timeStart);
+        requestMessage.setTimeEnd(timeEnd);
+        lessonRequestMessageRepository.save(requestMessage);
+
+        UUID receiverId = messageRequest.getReceiver().getId();
+        UUID senderId = messageRequest.getSender().getId();
+        reservationService.createReservatiion(receiverId, senderId, timeStart, timeEnd);
     }
 }

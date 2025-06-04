@@ -2,16 +2,20 @@ package com.zirom.tutorapi.services.impl;
 
 import com.zirom.tutorapi.domain.RequestState;
 import com.zirom.tutorapi.domain.ReservationDirection;
+import com.zirom.tutorapi.domain.entities.User;
 import com.zirom.tutorapi.domain.entities.lesson.Lesson;
 import com.zirom.tutorapi.domain.entities.lesson.Reservation;
 import com.zirom.tutorapi.repositories.LessonRepository;
 import com.zirom.tutorapi.repositories.ReservationRepository;
+import com.zirom.tutorapi.repositories.UserRepository;
 import com.zirom.tutorapi.services.AuthorizationService;
 import com.zirom.tutorapi.services.ReservationService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -21,6 +25,7 @@ public class ReservationServiceImpl implements ReservationService {
     private final ReservationRepository reservationRepository;
     private final AuthorizationService authorizationService;
     private final LessonRepository lessonRepository;
+    private final UserRepository userRepository;
 
     @Override
     public List<Reservation> getReservations(UUID id, RequestState state, ReservationDirection direction) {
@@ -47,6 +52,19 @@ public class ReservationServiceImpl implements ReservationService {
         }
 
         return savedReservation;
+    }
+
+    @Override
+    @Transactional
+    public Reservation createReservatiion(UUID userId, UUID learnerId, LocalDateTime timeStart, LocalDateTime timeEnd) {
+        User user = userRepository.findById(userId).orElseThrow(EntityNotFoundException::new);
+        User learner = userRepository.findById(learnerId).orElseThrow(EntityNotFoundException::new);
+        Reservation newReservation = new Reservation();
+        newReservation.setUser(user);
+        newReservation.setLearner(learner);
+        newReservation.setTimeStart(timeStart);
+        newReservation.setTimeEnd(timeEnd);
+        return reservationRepository.save(newReservation);
     }
 
     private String createGoogleMeetingUrl() {

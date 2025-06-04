@@ -11,7 +11,7 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-public class providerServiceImpl implements ProviderService {
+public class ProviderServiceImpl implements ProviderService {
     private final ProviderRepository providerRepository;
 
     @Override

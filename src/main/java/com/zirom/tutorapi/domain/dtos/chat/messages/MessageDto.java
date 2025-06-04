@@ -23,7 +23,8 @@ import java.util.UUID;
 @JsonSubTypes({
         @JsonSubTypes.Type(value = TextMessageDto.class, name = "TEXT"),
         @JsonSubTypes.Type(value = ImageMessageDto.class, name = "IMAGE"),
-        @JsonSubTypes.Type(value = VideoMessageDto.class, name = "VIDEO")
+        @JsonSubTypes.Type(value = VideoMessageDto.class, name = "VIDEO"),
+        @JsonSubTypes.Type(value = LessonRequestMessageDto.class, name = "LESSON")
 })
 public abstract class MessageDto {
     private UUID id;
