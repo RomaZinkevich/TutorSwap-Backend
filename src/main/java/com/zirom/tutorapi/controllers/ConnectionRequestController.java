@@ -1,7 +1,7 @@
 package com.zirom.tutorapi.controllers;
 
 import com.zirom.tutorapi.domain.ConnectionRequestDirection;
-import com.zirom.tutorapi.domain.ConnectionRequestState;
+import com.zirom.tutorapi.domain.RequestState;
 import com.zirom.tutorapi.domain.dtos.connection.ConnectionRequestDto;
 import com.zirom.tutorapi.domain.dtos.connection.CreateConnectionRequest;
 import com.zirom.tutorapi.domain.dtos.user.UserDto;
@@ -34,7 +34,7 @@ public class ConnectionRequestController {
     @GetMapping
     @SecurityRequirement(name = "BearerAuth")
     public ResponseEntity<List<ConnectionRequestDto>> getPrivatePendingConnectionRequests(
-            @RequestParam(required = false, defaultValue = "PENDING") ConnectionRequestState requestState,
+            @RequestParam(required = false, defaultValue = "PENDING") RequestState requestState,
             @RequestParam(required = false, defaultValue = "RECEIVED") ConnectionRequestDirection direction,
             Authentication authentication
     ) {

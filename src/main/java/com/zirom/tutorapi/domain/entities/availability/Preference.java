@@ -8,7 +8,7 @@ import lombok.*;
 import java.util.UUID;
 
 @Entity
-@Table(name = "preference")
+@Table(name = "preferences")
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter

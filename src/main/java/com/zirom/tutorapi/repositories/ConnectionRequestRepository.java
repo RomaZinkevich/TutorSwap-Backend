@@ -1,6 +1,6 @@
 package com.zirom.tutorapi.repositories;
 
-import com.zirom.tutorapi.domain.ConnectionRequestState;
+import com.zirom.tutorapi.domain.RequestState;
 import com.zirom.tutorapi.domain.entities.ConnectionRequest;
 import com.zirom.tutorapi.domain.entities.User;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -12,8 +12,8 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface ConnectionRequestRepository extends JpaRepository<ConnectionRequest, UUID> {
-    List<ConnectionRequest> findConnectionRequestsByReceiverUser_IdAndRequestState(UUID receiverUserId, ConnectionRequestState requestState);
-    List<ConnectionRequest> findConnectionRequestsBySenderUser_IdAndRequestState(UUID receiverUserId, ConnectionRequestState requestState);
+    List<ConnectionRequest> findConnectionRequestsByReceiverUser_IdAndRequestState(UUID receiverUserId, RequestState requestState);
+    List<ConnectionRequest> findConnectionRequestsBySenderUser_IdAndRequestState(UUID receiverUserId, RequestState requestState);
 
 
     @Query("""

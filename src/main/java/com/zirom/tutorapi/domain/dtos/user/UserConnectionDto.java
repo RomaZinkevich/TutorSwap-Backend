@@ -1,7 +1,7 @@
 package com.zirom.tutorapi.domain.dtos.user;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.zirom.tutorapi.domain.ConnectionRequestState;
+import com.zirom.tutorapi.domain.RequestState;
 import com.zirom.tutorapi.domain.dtos.skill.SkillDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -25,7 +25,7 @@ public class UserConnectionDto {
     private String wantToLearnDetail;
     private String wantToTeachDetail;
     private boolean connectionRequestExists;
-    private ConnectionRequestState requestState;
+    private RequestState requestState;
     @JsonProperty("isSender")
     private boolean isSender;
 }

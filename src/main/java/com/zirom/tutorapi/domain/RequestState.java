@@ -1,5 +1,5 @@
 package com.zirom.tutorapi.domain;
 
-public enum ConnectionRequestState {
+public enum RequestState {
     REJECTED, ACCEPTED, PENDING
 }

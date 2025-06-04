@@ -1,7 +1,7 @@
 package com.zirom.tutorapi.services.impl;
 
 import com.zirom.tutorapi.domain.ConnectionRequestDirection;
-import com.zirom.tutorapi.domain.ConnectionRequestState;
+import com.zirom.tutorapi.domain.RequestState;
 import com.zirom.tutorapi.domain.MessageType;
 import com.zirom.tutorapi.domain.dtos.chat.messages.requests.TextMessageRequest;
 import com.zirom.tutorapi.domain.dtos.connection.CreateConnectionRequest;
@@ -21,7 +21,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -37,7 +36,7 @@ public class ConnectionRequestServiceImpl implements ConnectionRequestService {
     private final MessageService messageService;
 
     @Override
-    public List<ConnectionRequest> getConnectionsByUser(UUID receiverId, ConnectionRequestState state, ConnectionRequestDirection direction) {
+    public List<ConnectionRequest> getConnectionsByUser(UUID receiverId, RequestState state, ConnectionRequestDirection direction) {
         if (direction == ConnectionRequestDirection.RECEIVED) return connectionRequestRepository.findConnectionRequestsByReceiverUser_IdAndRequestState(receiverId, state);
         return connectionRequestRepository.findConnectionRequestsBySenderUser_IdAndRequestState(receiverId, state);
     }
@@ -73,10 +72,10 @@ public class ConnectionRequestServiceImpl implements ConnectionRequestService {
         }
 
         if (!isAccepted) {
-            connectionRequest.setRequestState(ConnectionRequestState.REJECTED);
+            connectionRequest.setRequestState(RequestState.REJECTED);
             return connectionRequestRepository.save(connectionRequest);
         }
-        connectionRequest.setRequestState(ConnectionRequestState.ACCEPTED);
+        connectionRequest.setRequestState(RequestState.ACCEPTED);
 
         Connection newConnection = new Connection();
         newConnection.setUser(connectionRequest.getSenderUser());
@@ -101,10 +100,10 @@ public class ConnectionRequestServiceImpl implements ConnectionRequestService {
     @Override
     public void deleteConnectionRequest(UUID targetId, UUID loggedInUserId) {
         connectionRequestRepository.findConnectionBetween(targetId, loggedInUserId).ifPresent(request -> {
-            boolean isPendingAndSender = request.getRequestState() == ConnectionRequestState.PENDING &&
+            boolean isPendingAndSender = request.getRequestState() == RequestState.PENDING &&
                     request.getSenderUser().getId().equals(loggedInUserId);
 
-            boolean isRejectedAndReceiver = request.getRequestState() == ConnectionRequestState.REJECTED &&
+            boolean isRejectedAndReceiver = request.getRequestState() == RequestState.REJECTED &&
                     request.getReceiverUser().getId().equals(loggedInUserId);
 
             if (isPendingAndSender || isRejectedAndReceiver) {

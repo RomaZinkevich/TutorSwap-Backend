@@ -62,6 +62,8 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.DELETE, "/api/v1/connections/**").authenticated()
                         .requestMatchers(HttpMethod.POST, "/api/v1/uploads/**").authenticated()
                         .requestMatchers(HttpMethod.GET, "/api/v1/availabilities/**").authenticated()
+                        .requestMatchers(HttpMethod.PUT, "/api/v1/availabilities/**").authenticated()
+                        .requestMatchers(HttpMethod.GET, "/api/v1/reservations/**").authenticated()
                         .anyRequest().permitAll())
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(Customizer.withDefaults())
