@@ -32,6 +32,7 @@ public class ReservationController {
 
     private final ReservationService reservationService;
     private final ReservationMapper reservationMapper;
+    private final UserService userService;
 
     @GetMapping("/{id}")
     @SecurityRequirement(name = "BearerAuth")
@@ -44,4 +45,19 @@ public class ReservationController {
         List<ReservationDto> dtos = reservations.stream().map(reservationMapper::toDto).toList();
         return new ResponseEntity<>(dtos, HttpStatus.OK);
     }
+
+    @PutMapping("/{id}")
+    @SecurityRequirement(name = "BearerAuth")
+    public ResponseEntity<ReservationDto> changeReservation(
+            @RequestParam boolean isAccepted,
+            @PathVariable UUID id,
+            Authentication authentication
+    ) {
+        UserDto user = userService.getUserFromPrincipal((ApiUserDetails) authentication.getPrincipal());
+        Reservation reservation = reservationService.changeReservation(user.getId(), id, isAccepted);
+        ReservationDto dto = reservationMapper.toDto(reservation);
+        return ResponseEntity.ok(dto);
+    }
+
+
 }

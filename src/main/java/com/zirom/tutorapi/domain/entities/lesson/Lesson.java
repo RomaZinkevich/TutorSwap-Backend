@@ -5,36 +5,32 @@ import com.zirom.tutorapi.domain.entities.User;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
-@Table(name = "reservations")
+@Table(name = "lessons")
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
 @Builder
-public class Reservation {
+public class Lesson {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false,
-            foreignKey = @ForeignKey(name = "fk_reservation_user",
-                    foreignKeyDefinition = "FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE"))
-    private User user;
+    @JoinColumn(name = "teacher_id", nullable = false,
+            foreignKey = @ForeignKey(name = "fk_lesson_teacher",
+                    foreignKeyDefinition = "FOREIGN KEY (teacher_id) REFERENCES users(id) ON DELETE CASCADE"))
+    private User teacher;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "learner_id", nullable = false,
-            foreignKey = @ForeignKey(name = "fk_reservation_learner",
+            foreignKey = @ForeignKey(name = "fk_lesson_learner",
                     foreignKeyDefinition = "FOREIGN KEY (learner_id) REFERENCES users(id) ON DELETE CASCADE"))
     private User learner;
-
-    @Column(nullable = false)
-    private LocalDateTime date;
 
     @Column(nullable = false)
     private LocalDateTime timeStart;
@@ -43,11 +39,5 @@ public class Reservation {
     private LocalDateTime timeEnd;
 
     @Column(nullable = false)
-    private RequestState state;
-
-    @PrePersist
-    protected void onCreate() {
-        this.date = LocalDateTime.now();
-        this.state = RequestState.PENDING;
-    }
+    private String googleMeetingUrl;
 }
