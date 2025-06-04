@@ -1,6 +1,6 @@
 package com.zirom.tutorapi.services;
 
-import com.zirom.tutorapi.domain.dtos.availability.OwnAvailabilitySchedule;
+import com.zirom.tutorapi.domain.dtos.availability.AvailabilitySchedule;
 import com.zirom.tutorapi.domain.entities.availability.Duration;
 import com.zirom.tutorapi.domain.entities.availability.Preference;
 import com.zirom.tutorapi.domain.entities.availability.Schedule;
@@ -16,6 +16,6 @@ public interface AvailabilityService {
     void deletePreference(UUID userId);
     void deleteSchedules(UUID userId);
 
-    OwnAvailabilitySchedule getOwnAvailabilitySchedule(UUID userId);
-    OwnAvailabilitySchedule changeOwnAvailabilitySchedule(OwnAvailabilitySchedule ownAvailabilitySchedule, UUID userId);
+    AvailabilitySchedule getAvailabilitySchedule(UUID userId);
+    AvailabilitySchedule changeOwnAvailabilitySchedule(AvailabilitySchedule availabilitySchedule, UUID userId);
 }

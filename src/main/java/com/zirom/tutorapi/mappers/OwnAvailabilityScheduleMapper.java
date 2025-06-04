@@ -1,13 +1,13 @@
 package com.zirom.tutorapi.mappers;
 
-import com.zirom.tutorapi.domain.dtos.availability.OwnAvailabilitySchedule;
-import com.zirom.tutorapi.domain.dtos.availability.OwnAvailabilityScheduleDto;
-import com.zirom.tutorapi.domain.dtos.availability.request.OwnAvailabilityScheduleRequest;
+import com.zirom.tutorapi.domain.dtos.availability.AvailabilitySchedule;
+import com.zirom.tutorapi.domain.dtos.availability.AvailabilityScheduleDto;
+import com.zirom.tutorapi.domain.dtos.availability.request.AvailabilityScheduleRequest;
 import org.mapstruct.Mapper;
 import org.mapstruct.ReportingPolicy;
 
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface OwnAvailabilityScheduleMapper {
-    OwnAvailabilityScheduleDto toDto(OwnAvailabilitySchedule availabilitySchedule);
-    OwnAvailabilitySchedule toEntity(OwnAvailabilityScheduleRequest request);
+    AvailabilityScheduleDto toDto(AvailabilitySchedule availabilitySchedule);
+    AvailabilitySchedule toEntity(AvailabilityScheduleRequest request);
 }

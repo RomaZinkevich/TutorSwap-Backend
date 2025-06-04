@@ -1,6 +1,5 @@
 package com.zirom.tutorapi.domain.dtos.availability.request;
 
-import com.zirom.tutorapi.domain.dtos.availability.PreferenceDto;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -13,7 +12,7 @@ import java.util.List;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class OwnAvailabilityScheduleRequest {
+public class AvailabilityScheduleRequest {
     @NotNull(message = "schedule list is required")
     private List<ScheduleRequest> schedules;
 

@@ -10,7 +10,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class OwnAvailabilitySchedule {
+public class AvailabilitySchedule {
     private List<Schedule> schedules;
     private Preference preference;
 }

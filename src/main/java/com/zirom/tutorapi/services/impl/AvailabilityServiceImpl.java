@@ -1,6 +1,6 @@
 package com.zirom.tutorapi.services.impl;
 
-import com.zirom.tutorapi.domain.dtos.availability.OwnAvailabilitySchedule;
+import com.zirom.tutorapi.domain.dtos.availability.AvailabilitySchedule;
 import com.zirom.tutorapi.domain.entities.User;
 import com.zirom.tutorapi.domain.entities.availability.Duration;
 import com.zirom.tutorapi.domain.entities.availability.Preference;
@@ -55,11 +55,11 @@ public class AvailabilityServiceImpl implements AvailabilityService {
     }
 
     @Override
-    public OwnAvailabilitySchedule getOwnAvailabilitySchedule(UUID userId) {
+    public AvailabilitySchedule getAvailabilitySchedule(UUID userId) {
         List<Schedule> schedules = scheduleRepository.findAllByUser_Id(userId);
         Preference preference = preferenceRepository.findByUser_Id(userId).orElseThrow(EntityNotFoundException::new);
         if (schedules.isEmpty()) throw new EntityNotFoundException("Schedule not found");
-        OwnAvailabilitySchedule ownAvailability = new OwnAvailabilitySchedule();
+        AvailabilitySchedule ownAvailability = new AvailabilitySchedule();
         ownAvailability.setPreference(preference);
         ownAvailability.setSchedules(schedules);
         return ownAvailability;
@@ -67,13 +67,13 @@ public class AvailabilityServiceImpl implements AvailabilityService {
 
     @Override
     @Transactional
-    public OwnAvailabilitySchedule changeOwnAvailabilitySchedule(OwnAvailabilitySchedule ownAvailabilitySchedule, UUID userId) {
+    public AvailabilitySchedule changeOwnAvailabilitySchedule(AvailabilitySchedule availabilitySchedule, UUID userId) {
         User user = userService.findById(userId).orElseThrow(EntityNotFoundException::new);
         Optional<Preference> oldPreference = preferenceRepository.findByUser_Id(userId);
         List<Schedule> oldSchedules = scheduleRepository.findAllByUser_Id(userId);
-        Preference newPreference = ownAvailabilitySchedule.getPreference();
+        Preference newPreference = availabilitySchedule.getPreference();
         newPreference.setUser(user);
-        List<Schedule> newSchedules = ownAvailabilitySchedule.getSchedules();
+        List<Schedule> newSchedules = availabilitySchedule.getSchedules();
         newSchedules.forEach(schedule -> {schedule.setUser(user);});
 
         Preference preference = createPreference(newPreference);
@@ -82,7 +82,7 @@ public class AvailabilityServiceImpl implements AvailabilityService {
         oldPreference.ifPresent(preferenceRepository::delete);
         oldSchedules.forEach(scheduleRepository::delete);
 
-        OwnAvailabilitySchedule newSchedule = new OwnAvailabilitySchedule();
+        AvailabilitySchedule newSchedule = new AvailabilitySchedule();
         newSchedule.setPreference(preference);
         newSchedule.setSchedules(schedules);
         return newSchedule;
