@@ -2,8 +2,6 @@ package com.zirom.tutorapi.chat;
 
 import com.zirom.tutorapi.domain.dtos.chat.messages.MessageDto;
 import com.zirom.tutorapi.domain.dtos.chat.messages.requests.MessageRequest;
-import com.zirom.tutorapi.domain.dtos.chat.messages.requests.TextMessageRequest;
-import com.zirom.tutorapi.domain.dtos.error.ErrorMessageDto;
 import com.zirom.tutorapi.domain.entities.messages.BaseMessage;
 import com.zirom.tutorapi.mappers.MessageMapper;
 import com.zirom.tutorapi.services.MessageService;
@@ -31,20 +29,8 @@ public class ChatController {
     ) {
         UUID senderId = UUID.fromString((String) headerAccessor.getSessionAttributes().get("id"));
         UUID chatId = messageRequest.getChatId();
-        MessageDto messageDto;
-        if (messageRequest instanceof TextMessageRequest text) {
-            BaseMessage baseMessage = messageService.saveTextMessage(text, senderId);
-            messageDto = messageMapper.toDto(baseMessage, senderId);
-        }
-        else {
-            ErrorMessageDto error = new ErrorMessageDto().builder()
-                    .chatId(chatId)
-                    .message("Invalid message format")
-                    .senderId(senderId)
-                    .build();
-            messagingTemplate.convertAndSend("/topic/chat." + chatId, error);
-            return;
-        }
+        BaseMessage baseMessage = messageService.saveMessage(messageRequest, senderId);
+        MessageDto messageDto = messageMapper.toDto(baseMessage, senderId);
 
         messagingTemplate.convertAndSend("/topic/chat." + chatId, messageDto);
     }

@@ -1,12 +1,16 @@
 package com.zirom.tutorapi.services.impl;
 
+import com.zirom.tutorapi.domain.MessageType;
+import com.zirom.tutorapi.domain.dtos.chat.messages.requests.ImageMessageRequest;
 import com.zirom.tutorapi.domain.dtos.chat.messages.requests.MessageRequest;
 import com.zirom.tutorapi.domain.dtos.chat.messages.requests.TextMessageRequest;
 import com.zirom.tutorapi.domain.entities.Chat;
 import com.zirom.tutorapi.domain.entities.User;
 import com.zirom.tutorapi.domain.entities.messages.BaseMessage;
+import com.zirom.tutorapi.domain.entities.messages.ImageMessage;
 import com.zirom.tutorapi.domain.entities.messages.TextMessage;
 import com.zirom.tutorapi.repositories.messages.BaseMessageRepository;
+import com.zirom.tutorapi.repositories.messages.ImageMessageRepository;
 import com.zirom.tutorapi.repositories.messages.TextMessageRepository;
 import com.zirom.tutorapi.services.AuthorizationService;
 import com.zirom.tutorapi.services.ChatService;
@@ -28,24 +32,11 @@ public class MessageServiceImpl implements MessageService {
     private final TextMessageRepository textMessageRepository;
     private final UserService userService;
     private final ChatService chatService;
-    private final AuthorizationService authorizationService;
-
-    @Override
-    public List<BaseMessage> getAllMessagesByChatAndUserIds(UUID userId, UUID chatId) {
-        List<BaseMessage> messages = baseMessageRepository.findAllByChat_IdOrderByTimestampAsc(chatId);
-        if (messages.isEmpty()) throw new EntityNotFoundException();
-        authorizationService.hasAccessToChat(messages.get(0).getChat(), userId);
-        return messages;
-    }
-
-    @Override
-    public BaseMessage getLastMessageByChatId(UUID chatId) {
-        return baseMessageRepository.findTopByChat_IdOrderByTimestampDesc(chatId);
-    }
+    private final ImageMessageRepository imageMessageRepository;
 
     @Override
     @Transactional
-    public BaseMessage saveTextMessage(TextMessageRequest messageRequest, UUID senderId) {
+    public BaseMessage saveMessage(MessageRequest messageRequest, UUID senderId) {
         User sender = userService.findById(senderId).orElseThrow(EntityNotFoundException::new);
         User receiver = userService.findById(messageRequest.getReceiverId()).orElseThrow(EntityNotFoundException::new);
         Chat chat = chatService.getChatById(messageRequest.getChatId()).orElseThrow(EntityNotFoundException::new);
@@ -56,11 +47,25 @@ public class MessageServiceImpl implements MessageService {
         baseMessage.setChat(chat);
         BaseMessage savedMessage = baseMessageRepository.save(baseMessage);
 
-        TextMessage textMessage = new TextMessage();
-        textMessage.setMessage(savedMessage);
-        textMessage.setContent(messageRequest.getContent());
-        textMessageRepository.save(textMessage);
+        if (messageRequest instanceof TextMessageRequest text) saveTextMessage(savedMessage, text.getContent());
+        if (messageRequest instanceof ImageMessageRequest image) saveImageMessage(savedMessage, image);
 
         return savedMessage;
+    }
+
+
+    private void saveTextMessage(BaseMessage savedMessage, String content) {
+        TextMessage textMessage = new TextMessage();
+        textMessage.setMessage(savedMessage);
+        textMessage.setContent(content);
+        textMessageRepository.save(textMessage);
+    }
+
+    private void saveImageMessage(BaseMessage messageRequest, ImageMessageRequest image) {
+        ImageMessage imageMessage = new ImageMessage();
+        imageMessage.setMessage(messageRequest);
+        imageMessage.setImageUrl(image.getImageUrl());
+        imageMessage.setCaption(image.getCaption());
+        imageMessageRepository.save(imageMessage);
     }
 }

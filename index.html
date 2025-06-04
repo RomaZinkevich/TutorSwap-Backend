@@ -909,3 +909,69 @@
                         messageText += `\nCaption: ${message.caption}`;
                     }
                 } else if (message.content) {
+                    messageText = message.content;
+                } else if (message.body) {
+                    messageText = message.body;
+                } else if (message.message) {
+                    messageText = message.message;
+                } else {
+                    messageText = data;
+                }
+
+                this.addMessage(messageText, 'received', messageType);
+            } catch (error) {
+                this.addMessage(data, 'received', 'TEXT');
+            }
+        }
+
+        addMessage(text, type, msgType = 'TEXT') {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${type}`;
+
+            const timestamp = new Date().toLocaleTimeString();
+            const typeBadge = msgType !== 'TEXT' ? `<div class="message-type-badge ${msgType.toLowerCase()}">${msgType}</div>` : '';
+
+            messageDiv.innerHTML = `
+                ${typeBadge}
+                <div>${this.escapeHtml(text)}</div>
+                <small style="opacity: 0.7; font-size: 0.8em;">${timestamp}</small>
+            `;
+
+            this.messagesContainer.appendChild(messageDiv);
+            this.scrollToBottom();
+        }
+
+        addSystemMessage(text) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'message system';
+            messageDiv.innerHTML = `
+                <div>${this.escapeHtml(text)}</div>
+                <small style="opacity: 0.7; font-size: 0.8em;">${new Date().toLocaleTimeString()}</small>
+            `;
+
+            this.messagesContainer.appendChild(messageDiv);
+            this.scrollToBottom();
+        }
+
+        updateStatus(status, text) {
+            this.statusIndicator.className = `status-indicator ${status}`;
+            this.statusText.textContent = text;
+        }
+
+        scrollToBottom() {
+            this.messagesContainer.scrollTop = this.messagesContainer.scrollHeight;
+        }
+
+        escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        new WebSocketTester();
+    });
+</script>
+</body>
+</html>

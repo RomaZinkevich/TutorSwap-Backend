@@ -93,7 +93,7 @@ public class ConnectionRequestServiceImpl implements ConnectionRequestService {
         newMessageRequest.setChatId(chat.getId());
         newMessageRequest.setMessageType(MessageType.TEXT);
         newMessageRequest.setReceiverId(connectionRequest.getReceiverUser().getId());
-        messageService.saveTextMessage(newMessageRequest, connectionRequest.getSenderUser().getId());
+        messageService.saveMessage(newMessageRequest, connectionRequest.getSenderUser().getId());
 
         return connectionRequestRepository.save(connectionRequest);
     }

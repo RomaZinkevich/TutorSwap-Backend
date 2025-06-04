@@ -13,11 +13,11 @@ import com.zirom.tutorapi.domain.dtos.user.UserDto;
 import com.zirom.tutorapi.domain.entities.Provider;
 import com.zirom.tutorapi.domain.entities.Skill;
 import com.zirom.tutorapi.domain.entities.User;
+import com.zirom.tutorapi.domain.entities.availability.Duration;
+import com.zirom.tutorapi.domain.entities.availability.Preference;
+import com.zirom.tutorapi.domain.entities.availability.Schedule;
 import com.zirom.tutorapi.mappers.UserMapper;
-import com.zirom.tutorapi.services.GoogleOAuthService;
-import com.zirom.tutorapi.services.SkillService;
-import com.zirom.tutorapi.services.UserService;
-import com.zirom.tutorapi.services.ProviderService;
+import com.zirom.tutorapi.services.*;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
@@ -36,12 +36,15 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 import java.security.Key;
+import java.time.DayOfWeek;
+import java.time.LocalTime;
 import java.util.*;
 
 @Service
 @RequiredArgsConstructor
 public class GoogleOAuthServiceImpl implements GoogleOAuthService {
     private final ProviderService providerService;
+    private final AvailabilityService availabilityService;
     @Value("${GOOGLE_CLIENT_ID}")
     private String clientId;
 
@@ -101,8 +104,93 @@ public class GoogleOAuthServiceImpl implements GoogleOAuthService {
         newProvider.setProviderUserId(userInfo.getSub());
         newProvider.setUser(user);
 
+        createUsersAvailability(user);
+
         return providerService.save(newProvider).getUser();
 
+    }
+
+    private void createUsersAvailability(User user) {
+        createUsersDuration(user);
+        createUsersPreference(user);
+        createUsersSchedule(user);
+    }
+
+    private void createUsersPreference(User user){
+        Preference preference = new Preference();
+        preference.setUser(user);
+        preference.setFutureDays(7);
+        preference.setMinNoticeHours(24);
+
+        availabilityService.createPreference(preference);
+    }
+
+    private void createUsersDuration(User user) {
+        List<Duration> list = new ArrayList<>();
+        Duration durationFifteen = new Duration();
+        durationFifteen.setUser(user);
+        durationFifteen.setDuration(15);
+        list.add(durationFifteen);
+
+        Duration durationThirty = new Duration();
+        durationThirty.setUser(user);
+        durationThirty.setDuration(30);
+        list.add(durationThirty);
+
+        Duration durationHour = new Duration();
+        durationHour.setUser(user);
+        durationHour.setDuration(60);
+        list.add(durationHour);
+
+        availabilityService.createDurations(list);
+    }
+
+    private void createUsersSchedule(User user) {
+        List<Schedule> schedules = new ArrayList<>();
+
+        Schedule monSched = new Schedule();
+        monSched.setUser(user);
+        monSched.setDayOfWeek(DayOfWeek.MONDAY);
+        monSched.setStartTime(LocalTime.of(9, 0));
+        monSched.setEndTime(LocalTime.of(18, 0));
+        schedules.add(monSched);
+
+        Schedule tueSched = new Schedule();
+        tueSched.setUser(user);
+        tueSched.setDayOfWeek(DayOfWeek.TUESDAY);
+        tueSched.setStartTime(LocalTime.of(10, 0));
+        tueSched.setEndTime(LocalTime.of(18, 0));
+        schedules.add(tueSched);
+
+        Schedule wedSched = new Schedule();
+        wedSched.setUser(user);
+        wedSched.setDayOfWeek(DayOfWeek.WEDNESDAY);
+        wedSched.setStartTime(LocalTime.of(10, 0));
+        wedSched.setEndTime(LocalTime.of(17, 0));
+        schedules.add(wedSched);
+
+        Schedule thursMornSched = new Schedule();
+        thursMornSched.setUser(user);
+        thursMornSched.setDayOfWeek(DayOfWeek.THURSDAY);
+        thursMornSched.setStartTime(LocalTime.of(8, 0));
+        thursMornSched.setEndTime(LocalTime.of(10, 0));
+        schedules.add(thursMornSched);
+
+        Schedule thursAfternoonSched = new Schedule();
+        thursAfternoonSched.setUser(user);
+        thursAfternoonSched.setDayOfWeek(DayOfWeek.THURSDAY);
+        thursAfternoonSched.setStartTime(LocalTime.of(13, 0));
+        thursAfternoonSched.setEndTime(LocalTime.of(18, 0));
+        schedules.add(thursAfternoonSched);
+
+        Schedule friSched = new Schedule();
+        friSched.setUser(user);
+        friSched.setDayOfWeek(DayOfWeek.FRIDAY);
+        friSched.setStartTime(LocalTime.of(12, 0));
+        friSched.setEndTime(LocalTime.of(15, 0));
+        schedules.add(friSched);
+
+        availabilityService.createSchedules(schedules);
     }
 
     private GoogleUserInfo verifyAndParseIdToken(String idTokenString){
