@@ -64,6 +64,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/api/v1/availabilities/**").authenticated()
                         .requestMatchers(HttpMethod.PUT, "/api/v1/availabilities/**").authenticated()
                         .requestMatchers(HttpMethod.GET, "/api/v1/reservations/**").authenticated()
+                        .requestMatchers(HttpMethod.GET, "/api/v1/lessons/**").authenticated()
                         .anyRequest().permitAll())
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(Customizer.withDefaults())
