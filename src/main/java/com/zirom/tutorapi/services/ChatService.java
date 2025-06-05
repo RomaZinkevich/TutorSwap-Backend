@@ -12,5 +12,5 @@ public interface ChatService {
     Chat createChat(Chat chat);
     List<ChatDto> getAllChatsByUserId(UUID userId);
     Optional<Chat> getChatById(UUID chatId);
-    ChatMessagesDto getChatAndMessagesById(UUID chatId, UUID loggedInUserId);
+    ChatMessagesDto getChatAndMessagesById(UUID userId, UUID loggedInUserId);
 }

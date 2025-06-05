@@ -72,10 +72,10 @@ public class ChatServiceImpl implements ChatService {
     }
 
     @Override
-    public ChatMessagesDto getChatAndMessagesById(UUID chatId, UUID loggedInUserId){
-        Chat chat = chatRepository.findById(chatId).orElseThrow(EntityNotFoundException::new);
+    public ChatMessagesDto getChatAndMessagesById(UUID userId, UUID loggedInUserId){
+        Chat chat = chatRepository.findChatBetween(userId, loggedInUserId).orElseThrow(EntityNotFoundException::new);
         authorizationService.hasAccessToChat(chat, loggedInUserId);
-        List<BaseMessage> messages = baseMessageRepository.findAllByChat_IdOrderByTimestampAsc(chatId);
+        List<BaseMessage> messages = baseMessageRepository.findAllByChat_IdOrderByTimestampAsc(chat.getId());
         List<MessageDto> messageDtos = messages.stream()
                 .map(m -> messageMapper.toDto(m, loggedInUserId))
                 .toList();
