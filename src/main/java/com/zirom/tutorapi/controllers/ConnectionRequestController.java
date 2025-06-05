@@ -44,14 +44,14 @@ public class ConnectionRequestController {
         return new ResponseEntity<>(connectionRequestDtos, HttpStatus.OK);
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/{userId}")
     @SecurityRequirement(name = "BearerAuth")
     public ResponseEntity<ConnectionRequestDto> getConnectionRequest(
             Authentication authentication,
-            @PathVariable UUID id
+            @PathVariable UUID userId
     ) {
         UserDto user = userService.getUserFromPrincipal((ApiUserDetails) authentication.getPrincipal());
-        ConnectionRequest connectionRequests = connectionRequestService.getConnectionRequest(id, user.getId());
+        ConnectionRequest connectionRequests = connectionRequestService.getConnectionRequest(userId, user.getId());
         ConnectionRequestDto connectionRequestDto = connectionRequestMapper.toDto(connectionRequests);
         return new ResponseEntity<>(connectionRequestDto, HttpStatus.OK);
     }
@@ -68,27 +68,27 @@ public class ConnectionRequestController {
         return new ResponseEntity<>(connectionRequestDto, HttpStatus.CREATED);
     }
 
-    @PutMapping(path="/{targetId}")
+    @PutMapping(path="/{userId}")
     @SecurityRequirement(name = "BearerAuth")
     public ResponseEntity<ConnectionRequestDto> updateConnectionRequest(
-            @PathVariable UUID targetId,
+            @PathVariable UUID userId,
             @RequestBody boolean isAccepted,
             Authentication authentication
     ) {
         UserDto user = userService.getUserFromPrincipal((ApiUserDetails) authentication.getPrincipal());
-        ConnectionRequest connectionRequest = connectionRequestService.updateConnectionRequest(targetId, user.getId(), isAccepted);
+        ConnectionRequest connectionRequest = connectionRequestService.updateConnectionRequest(userId, user.getId(), isAccepted);
         ConnectionRequestDto connectionRequestDto = connectionRequestMapper.toDto(connectionRequest);
         return new ResponseEntity<>(connectionRequestDto, HttpStatus.OK);
     }
 
-    @DeleteMapping(path="/{targetId}")
+    @DeleteMapping(path="/{userId}")
     @SecurityRequirement(name = "BearerAuth")
     public ResponseEntity deleteConnectionRequest(
-            @PathVariable UUID targetId,
+            @PathVariable UUID userId,
             Authentication authentication
     ) {
         UserDto user = userService.getUserFromPrincipal((ApiUserDetails) authentication.getPrincipal());
-        connectionRequestService.deleteConnectionRequest(targetId, user.getId());
+        connectionRequestService.deleteConnectionRequest(userId, user.getId());
         return new ResponseEntity(HttpStatus.NO_CONTENT);
     }
 }

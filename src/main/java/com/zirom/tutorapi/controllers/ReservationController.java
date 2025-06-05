@@ -36,14 +36,14 @@ public class ReservationController {
     private final ReservationMapper reservationMapper;
     private final UserService userService;
 
-    @GetMapping("/{id}")
+    @GetMapping("/{userId}")
     @SecurityRequirement(name = "BearerAuth")
     public ResponseEntity<List<ReservationDto>> getReservations(
             @RequestParam(required = false, defaultValue = "ACCEPTED") RequestState requestState,
             @RequestParam(required = false, defaultValue = "TEACHER") ReservationDirection direction,
-            @PathVariable UUID id
+            @PathVariable UUID userId
     ) {
-        List<Reservation> reservations = reservationService.getReservations(id, requestState, direction);
+        List<Reservation> reservations = reservationService.getReservations(userId, requestState, direction);
         List<ReservationDto> dtos = reservations.stream().map(reservationMapper::toDto).toList();
         return new ResponseEntity<>(dtos, HttpStatus.OK);
     }

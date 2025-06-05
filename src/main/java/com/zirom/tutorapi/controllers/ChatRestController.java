@@ -46,15 +46,14 @@ public class ChatRestController {
         return new ResponseEntity<>(chatDtos, HttpStatus.OK);
     }
 
-    @GetMapping(path="/{id}")
+    @GetMapping(path="/{userId}")
     @SecurityRequirement(name = "BearerAuth")
     public ResponseEntity<ChatMessagesDto> getMessagesByChatId(
             Authentication authentication,
-            @PathVariable UUID id
+            @PathVariable UUID userId
     ) {
         UserDto user = userService.getUserFromPrincipal((ApiUserDetails) authentication.getPrincipal());
-        UUID userId = user.getId();
-        ChatMessagesDto messages = chatService.getChatAndMessagesById(id, userId);
+        ChatMessagesDto messages = chatService.getChatAndMessagesById(userId, user.getId());
         return new ResponseEntity<>(messages, HttpStatus.OK);
     }
 }

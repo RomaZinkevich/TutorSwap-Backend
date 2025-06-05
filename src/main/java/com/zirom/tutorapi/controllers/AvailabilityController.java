@@ -38,10 +38,10 @@ public class AvailabilityController {
         return new ResponseEntity<>(availabilityScheduleDto, HttpStatus.OK);
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/{userId}")
     @SecurityRequirement(name = "BearerAuth")
-    public ResponseEntity<AvailabilityScheduleDto> getOwnAvailability(@PathVariable UUID id) {
-        AvailabilitySchedule availabilitySchedule = availabilityService.getAvailabilitySchedule(id);
+    public ResponseEntity<AvailabilityScheduleDto> getOwnAvailability(@PathVariable UUID userId) {
+        AvailabilitySchedule availabilitySchedule = availabilityService.getAvailabilitySchedule(userId);
         AvailabilityScheduleDto availabilityScheduleDto = ownAvailabilityScheduleMapper.toDto(availabilitySchedule);
         return new ResponseEntity<>(availabilityScheduleDto, HttpStatus.OK);
     }

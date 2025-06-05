@@ -41,15 +41,14 @@ public class UserController {
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
-    @GetMapping(path="/{id}")
+    @GetMapping(path="/{userId}")
     @SecurityRequirement(name = "BearerAuth")
     public ResponseEntity<UserConnectionDto> getUserInfoById(
-            @PathVariable UUID id,
+            @PathVariable UUID userId,
             Authentication authentication
     ) {
-        System.out.println(id);
         UserDto currentUser = userService.getUserFromPrincipal((ApiUserDetails) authentication.getPrincipal());
-        UserConnectionDto user = userService.findByIdWithConnection(id, currentUser.getId()).orElseThrow(() -> new EntityNotFoundException("User not found with id: " + id));
+        UserConnectionDto user = userService.findByIdWithConnection(userId, currentUser.getId()).orElseThrow(() -> new EntityNotFoundException("User not found with id: " + userId));
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
