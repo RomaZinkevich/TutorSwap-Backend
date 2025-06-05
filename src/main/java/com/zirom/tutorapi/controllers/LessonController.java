@@ -3,6 +3,7 @@ package com.zirom.tutorapi.controllers;
 import com.zirom.tutorapi.domain.dtos.lesson.LessonDto;
 import com.zirom.tutorapi.domain.dtos.user.UserDto;
 import com.zirom.tutorapi.domain.entities.lesson.Lesson;
+import com.zirom.tutorapi.mappers.LessonMapper;
 import com.zirom.tutorapi.security.ApiUserDetails;
 import com.zirom.tutorapi.services.LessonService;
 import com.zirom.tutorapi.services.UserService;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping(path="/api/v1/lessons")
@@ -26,6 +28,7 @@ public class LessonController {
 
     private final LessonService lessonService;
     private final UserService userService;
+    private final LessonMapper lessonMapper;
 
     @GetMapping("/me")
     @SecurityRequirement(name = "BearerAuth")
@@ -34,7 +37,8 @@ public class LessonController {
             Authentication authentication
     ) {
         UserDto user = userService.getUserFromPrincipal((ApiUserDetails) authentication.getPrincipal());
-        List<LessonDto> lessons = lessonService.getLessons(user.getId(), isLearner);
-        return ResponseEntity.ok(lessons);
+        List<Lesson> lessons = lessonService.getLessons(user.getId(), isLearner);
+        List<LessonDto> lessonDtos = lessons.stream().map(lesson ->  lessonMapper.toDto(lesson, isLearner)).toList();
+        return ResponseEntity.ok(lessonDtos);
     }
 }

@@ -10,5 +10,5 @@ import java.util.UUID;
 public interface LessonService {
     Lesson createLesson(Reservation reservation, String googleMeetUrl);
 
-    List<LessonDto> getLessons(UUID id, boolean isLearner);
+    List<Lesson> getLessons(UUID id, boolean isLearner);
 }

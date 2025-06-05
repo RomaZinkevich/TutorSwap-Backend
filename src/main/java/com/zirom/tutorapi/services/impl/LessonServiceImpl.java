@@ -35,19 +35,7 @@ public class LessonServiceImpl implements LessonService {
     }
 
     @Override
-    public List<LessonDto> getLessons(UUID id, boolean isLearner) {
-        List<Lesson> lessons = isLearner ? lessonRepository.findAllByLearner_Id(id) : lessonRepository.findAllByTeacher_Id(id);
-        List<LessonDto> lessonDtos = new ArrayList<>();
-        lessons.forEach(lesson -> {
-            LessonDto lessonDto = new LessonDto();
-            lessonDto.setTimeStart(lesson.getTimeStart());
-            lessonDto.setTimeEnd(lesson.getTimeEnd());
-            lessonDto.setGoogleMeetingUrl(lesson.getGoogleMeetingUrl());
-            User otherUser = isLearner ? lesson.getTeacher() : lesson.getLearner();
-            OtherUserDto otherUserDto = userMapper.toOthersDto(otherUser);
-            lessonDto.setOtherUser(otherUserDto);
-            lessonDtos.add(lessonDto);
-        });
-        return lessonDtos;
+    public List<Lesson> getLessons(UUID id, boolean isLearner) {
+        return isLearner ? lessonRepository.findAllByLearner_Id(id) : lessonRepository.findAllByTeacher_Id(id);
     }
 }
