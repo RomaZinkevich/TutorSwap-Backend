@@ -15,6 +15,7 @@ import com.zirom.tutorapi.services.ReservationService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.apache.coyote.BadRequestException;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -42,6 +43,7 @@ public class ReservationServiceImpl implements ReservationService {
     @Transactional
     public Reservation changeReservation(UUID loggedInUserId, UUID reservationId, ChangeReservationDto changeReservationDto) {
         Reservation reservation = reservationRepository.findById(reservationId).orElseThrow(EntityNotFoundException::new);
+        if (reservation.getState() != RequestState.PENDING) throw new IllegalArgumentException("Reservation is not pending.");
         boolean isAccepted = changeReservationDto.isAccepted();
         String googleMeetUrl = changeReservationDto.getGoogleMeetUrl();
         authorizationService.canChangeReservation(reservation, loggedInUserId);

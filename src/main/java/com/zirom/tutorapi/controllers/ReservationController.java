@@ -51,7 +51,7 @@ public class ReservationController {
     @PutMapping("/{id}")
     @SecurityRequirement(name = "BearerAuth")
     public ResponseEntity<ReservationDto> changeReservation(
-            @RequestParam @Valid ChangeReservationDto changeReservationDto,
+            @RequestBody @Valid ChangeReservationDto changeReservationDto,
             @PathVariable UUID id,
             Authentication authentication
     ) {
