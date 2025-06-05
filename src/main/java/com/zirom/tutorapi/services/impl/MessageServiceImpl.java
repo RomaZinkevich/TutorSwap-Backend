@@ -41,6 +41,8 @@ public class MessageServiceImpl implements MessageService {
         baseMessage.setReceiver(receiver);
         baseMessage.setChat(chat);
         BaseMessage savedMessage = baseMessageRepository.save(baseMessage);
+        System.out.println(savedMessage.getId());
+        System.out.println(savedMessage.getMessageType());
 
         if (messageRequest instanceof TextMessageRequest text) saveTextMessage(savedMessage, text.getContent());
         if (messageRequest instanceof ImageMessageRequest image) saveImageMessage(savedMessage, image);
