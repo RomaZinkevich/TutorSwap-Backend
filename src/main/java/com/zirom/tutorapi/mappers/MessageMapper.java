@@ -1,13 +1,11 @@
 package com.zirom.tutorapi.mappers;
 
+import com.zirom.tutorapi.domain.RequestState;
 import com.zirom.tutorapi.domain.dtos.chat.messages.*;
 import com.zirom.tutorapi.domain.entities.Chat;
 import com.zirom.tutorapi.domain.entities.User;
 import com.zirom.tutorapi.domain.entities.messages.*;
-import com.zirom.tutorapi.repositories.messages.ImageMessageRepository;
-import com.zirom.tutorapi.repositories.messages.ScheduleMessageRepository;
-import com.zirom.tutorapi.repositories.messages.TextMessageRepository;
-import com.zirom.tutorapi.repositories.messages.VideoMessageRepository;
+import com.zirom.tutorapi.repositories.messages.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -19,6 +17,7 @@ public class MessageMapper {
     private final TextMessageRepository textMessageRepository;
     private final ImageMessageRepository imageMessageRepository;
     private final VideoMessageRepository videoMessageRepository;
+    private final LessonRequestMessageRepository lessonRequestMessageRepository;
 
     public MessageDto toDto(BaseMessage message, UUID loggedInUserId) {
         MessageDto dto;
@@ -49,6 +48,17 @@ public class MessageMapper {
 
             case SCHEDULE:
                 dto = new ScheduleMessageDto();
+                break;
+
+            case LESSON:
+                LessonRequestMessage lesson = lessonRequestMessageRepository.findById(message.getId()).orElseThrow();
+                RequestState state = lesson.getReservation().getState();
+                LessonRequestMessageDto lessonDto = new LessonRequestMessageDto();
+                lessonDto.setState(state);
+                lessonDto.setDescription(lesson.getDescription());
+                lessonDto.setTimeStart(lesson.getTimeStart());
+                lessonDto.setTimeEnd(lesson.getTimeEnd());
+                dto = lessonDto;
                 break;
 
             default:

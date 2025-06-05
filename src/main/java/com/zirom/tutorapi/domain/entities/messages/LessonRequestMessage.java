@@ -1,5 +1,6 @@
 package com.zirom.tutorapi.domain.entities.messages;
 
+import com.zirom.tutorapi.domain.entities.lesson.Reservation;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -32,4 +33,11 @@ public class LessonRequestMessage {
 
     @Column(nullable = false)
     private LocalDateTime timeEnd;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @MapsId
+    @JoinColumn(name = "reservation_id", nullable = false,
+            foreignKey = @ForeignKey(name = "fk_lessonmessage_reservation",
+                    foreignKeyDefinition = "FOREIGN KEY (reservation_id) REFERENCES reservations(id) ON DELETE CASCADE"))
+    private Reservation reservation;
 }

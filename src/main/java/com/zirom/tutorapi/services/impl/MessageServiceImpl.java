@@ -3,6 +3,7 @@ package com.zirom.tutorapi.services.impl;
 import com.zirom.tutorapi.domain.dtos.chat.messages.requests.*;
 import com.zirom.tutorapi.domain.entities.Chat;
 import com.zirom.tutorapi.domain.entities.User;
+import com.zirom.tutorapi.domain.entities.lesson.Reservation;
 import com.zirom.tutorapi.domain.entities.messages.*;
 import com.zirom.tutorapi.repositories.messages.*;
 import com.zirom.tutorapi.services.*;
@@ -84,15 +85,18 @@ public class MessageServiceImpl implements MessageService {
         LocalDateTime timeStart = lessonRequest.getTimeStart();
         LocalDateTime timeEnd = lessonRequest.getTimeEnd();
 
+        UUID receiverId = messageRequest.getReceiver().getId();
+        UUID senderId = messageRequest.getSender().getId();
+        Reservation reservation = reservationService.createReservation(receiverId, senderId, timeStart, timeEnd);
+
         LessonRequestMessage requestMessage = new LessonRequestMessage();
         requestMessage.setMessage(messageRequest);
         requestMessage.setDescription(lessonRequest.getDescription());
         requestMessage.setTimeStart(timeStart);
         requestMessage.setTimeEnd(timeEnd);
+        requestMessage.setReservation(reservation);
         lessonRequestMessageRepository.save(requestMessage);
 
-        UUID receiverId = messageRequest.getReceiver().getId();
-        UUID senderId = messageRequest.getSender().getId();
-        reservationService.createReservation(receiverId, senderId, timeStart, timeEnd);
+
     }
 }
