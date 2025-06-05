@@ -1,19 +1,16 @@
 package com.zirom.tutorapi.services.impl;
 
-import com.zirom.tutorapi.domain.MessageType;
 import com.zirom.tutorapi.domain.dtos.chat.messages.requests.*;
 import com.zirom.tutorapi.domain.entities.Chat;
 import com.zirom.tutorapi.domain.entities.User;
 import com.zirom.tutorapi.domain.entities.messages.*;
-import com.zirom.tutorapi.repositories.ScheduleRepository;
 import com.zirom.tutorapi.repositories.messages.*;
 import com.zirom.tutorapi.services.*;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import java.util.List;
+
 import java.util.UUID;
 import java.time.LocalDateTime;
 
@@ -96,6 +93,6 @@ public class MessageServiceImpl implements MessageService {
 
         UUID receiverId = messageRequest.getReceiver().getId();
         UUID senderId = messageRequest.getSender().getId();
-        reservationService.createReservatiion(receiverId, senderId, timeStart, timeEnd);
+        reservationService.createReservation(receiverId, senderId, timeStart, timeEnd);
     }
 }

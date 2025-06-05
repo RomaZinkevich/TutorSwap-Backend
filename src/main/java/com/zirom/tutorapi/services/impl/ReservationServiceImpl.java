@@ -2,6 +2,7 @@ package com.zirom.tutorapi.services.impl;
 
 import com.zirom.tutorapi.domain.RequestState;
 import com.zirom.tutorapi.domain.ReservationDirection;
+import com.zirom.tutorapi.domain.dtos.lesson.ChangeReservationDto;
 import com.zirom.tutorapi.domain.entities.User;
 import com.zirom.tutorapi.domain.entities.lesson.Lesson;
 import com.zirom.tutorapi.domain.entities.lesson.Reservation;
@@ -9,9 +10,11 @@ import com.zirom.tutorapi.repositories.LessonRepository;
 import com.zirom.tutorapi.repositories.ReservationRepository;
 import com.zirom.tutorapi.repositories.UserRepository;
 import com.zirom.tutorapi.services.AuthorizationService;
+import com.zirom.tutorapi.services.LessonService;
 import com.zirom.tutorapi.services.ReservationService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.apache.coyote.BadRequestException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,7 +27,7 @@ import java.util.UUID;
 public class ReservationServiceImpl implements ReservationService {
     private final ReservationRepository reservationRepository;
     private final AuthorizationService authorizationService;
-    private final LessonRepository lessonRepository;
+    private final LessonService lessonService;
     private final UserRepository userRepository;
 
     @Override
@@ -36,27 +39,21 @@ public class ReservationServiceImpl implements ReservationService {
     }
 
     @Override
-    public Reservation changeReservation(UUID loggedInUserId, UUID reservationId, boolean isAccepted) {
+    @Transactional
+    public Reservation changeReservation(UUID loggedInUserId, UUID reservationId, ChangeReservationDto changeReservationDto) {
         Reservation reservation = reservationRepository.findById(reservationId).orElseThrow(EntityNotFoundException::new);
+        boolean isAccepted = changeReservationDto.isAccepted();
+        String googleMeetUrl = changeReservationDto.getGoogleMeetUrl();
         authorizationService.canChangeReservation(reservation, loggedInUserId);
         reservation.setState(isAccepted ? RequestState.ACCEPTED : RequestState.REJECTED);
-        Reservation savedReservation = reservationRepository.save(reservation);
-        if (isAccepted) {
-            Lesson lesson = new Lesson();
-            lesson.setTeacher(reservation.getUser());
-            lesson.setLearner(reservation.getLearner());
-            lesson.setTimeStart(reservation.getTimeStart());
-            lesson.setTimeEnd(reservation.getTimeEnd());
-            lesson.setGoogleMeetingUrl(createGoogleMeetingUrl());
-            lessonRepository.save(lesson);
-        }
+        if (isAccepted) lessonService.createLesson(reservation, googleMeetUrl);
 
-        return savedReservation;
+        return reservationRepository.save(reservation);
     }
 
     @Override
     @Transactional
-    public Reservation createReservatiion(UUID userId, UUID learnerId, LocalDateTime timeStart, LocalDateTime timeEnd) {
+    public Reservation createReservation(UUID userId, UUID learnerId, LocalDateTime timeStart, LocalDateTime timeEnd) {
         User user = userRepository.findById(userId).orElseThrow(EntityNotFoundException::new);
         User learner = userRepository.findById(learnerId).orElseThrow(EntityNotFoundException::new);
         Reservation newReservation = new Reservation();
@@ -65,9 +62,5 @@ public class ReservationServiceImpl implements ReservationService {
         newReservation.setTimeStart(timeStart);
         newReservation.setTimeEnd(timeEnd);
         return reservationRepository.save(newReservation);
-    }
-
-    private String createGoogleMeetingUrl() {
-        return "http://google.meeting.example.com";
     }
 }

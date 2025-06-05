@@ -2,7 +2,7 @@ package com.zirom.tutorapi.services;
 
 import com.zirom.tutorapi.domain.RequestState;
 import com.zirom.tutorapi.domain.ReservationDirection;
-import com.zirom.tutorapi.domain.dtos.lesson.ReservationDto;
+import com.zirom.tutorapi.domain.dtos.lesson.ChangeReservationDto;
 import com.zirom.tutorapi.domain.entities.lesson.Reservation;
 
 import java.time.LocalDateTime;
@@ -12,7 +12,7 @@ import java.util.UUID;
 public interface ReservationService {
     List<Reservation> getReservations(UUID id, RequestState state, ReservationDirection direction);
 
-    Reservation changeReservation(UUID loggedInUserId, UUID reservationId, boolean isAccepted);
+    Reservation changeReservation(UUID loggedInUserId, UUID reservationId, ChangeReservationDto changeReservationDto);
 
-    Reservation createReservatiion(UUID userId, UUID learnerId, LocalDateTime timeStart, LocalDateTime timeEnd);
+    Reservation createReservation(UUID userId, UUID learnerId, LocalDateTime timeStart, LocalDateTime timeEnd);
 }

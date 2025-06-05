@@ -4,6 +4,7 @@ import com.zirom.tutorapi.domain.ConnectionRequestDirection;
 import com.zirom.tutorapi.domain.RequestState;
 import com.zirom.tutorapi.domain.ReservationDirection;
 import com.zirom.tutorapi.domain.dtos.connection.ConnectionRequestDto;
+import com.zirom.tutorapi.domain.dtos.lesson.ChangeReservationDto;
 import com.zirom.tutorapi.domain.dtos.lesson.ReservationDto;
 import com.zirom.tutorapi.domain.dtos.user.UserDto;
 import com.zirom.tutorapi.domain.entities.ConnectionRequest;
@@ -14,6 +15,7 @@ import com.zirom.tutorapi.services.ReservationService;
 import com.zirom.tutorapi.services.UserService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -49,12 +51,12 @@ public class ReservationController {
     @PutMapping("/{id}")
     @SecurityRequirement(name = "BearerAuth")
     public ResponseEntity<ReservationDto> changeReservation(
-            @RequestParam boolean isAccepted,
+            @RequestParam @Valid ChangeReservationDto changeReservationDto,
             @PathVariable UUID id,
             Authentication authentication
     ) {
         UserDto user = userService.getUserFromPrincipal((ApiUserDetails) authentication.getPrincipal());
-        Reservation reservation = reservationService.changeReservation(user.getId(), id, isAccepted);
+        Reservation reservation = reservationService.changeReservation(user.getId(), id, changeReservationDto);
         ReservationDto dto = reservationMapper.toDto(reservation);
         return ResponseEntity.ok(dto);
     }
