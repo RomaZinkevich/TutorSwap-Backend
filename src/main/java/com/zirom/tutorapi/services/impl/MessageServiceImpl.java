@@ -24,6 +24,7 @@ public class MessageServiceImpl implements MessageService {
     private final BaseMessageRepository baseMessageRepository;
     private final TextMessageRepository textMessageRepository;
     private final ImageMessageRepository imageMessageRepository;
+    private final VideoMessageRepository videoMessageRepository;
     private final ScheduleMessageRepository scheduleMessageRepository;
     private final UserService userService;
     private final ChatService chatService;
@@ -45,6 +46,7 @@ public class MessageServiceImpl implements MessageService {
 
         if (messageRequest instanceof TextMessageRequest text) saveTextMessage(savedMessage, text.getContent());
         if (messageRequest instanceof ImageMessageRequest image) saveImageMessage(savedMessage, image);
+        if (messageRequest instanceof VideoMessageRequest video) saveVideoMessage(savedMessage, video);
         if (messageRequest instanceof ScheduleMessageRequest) saveScheduleMessage(savedMessage);
         if (messageRequest instanceof LessonRequestMessageRequest lessonRequest) saveLessonRequestMessage(savedMessage, lessonRequest);
 
@@ -65,6 +67,14 @@ public class MessageServiceImpl implements MessageService {
         imageMessage.setImageUrl(image.getImageUrl());
         imageMessage.setCaption(image.getCaption());
         imageMessageRepository.save(imageMessage);
+    }
+
+    private void saveVideoMessage(BaseMessage messageRequest, VideoMessageRequest video) {
+        VideoMessage videoMessage = new VideoMessage();
+        videoMessage.setMessage(messageRequest);
+        videoMessage.setVideoUrl(video.getVideoUrl());
+        videoMessage.setCaption(video.getCaption());
+        videoMessageRepository.save(videoMessage);
     }
 
     private void saveScheduleMessage(BaseMessage messageRequest) {

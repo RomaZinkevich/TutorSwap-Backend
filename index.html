@@ -428,12 +428,6 @@
                     </div>
                     <button class="btn btn-primary" id="sendScheduleBtn" disabled>Send Schedule</button>
                 </div>
-
-                <!-- Text Message Input -->
-                <div class="message-input-row" id="lessonRow">
-                    <input type="text" id="textInput" placeholder="Type your message..." disabled />
-                    <button class="btn btn-primary" id="sendBtn" disabled>Send</button>
-                </div>
             </div>
         </div>
     </div>
@@ -920,22 +914,6 @@
             this.addMessage(`📅 Check my schedule!`, 'sent', 'SCHEDULE');
         }
 
-        sendLessonMessage() {
-            const message = this.textInput.value.trim();
-            if (!message || !this.isConnected || !this.stompClient) return;
-
-            this.sendMessage({
-                messageType: "LESSON",
-                description: message,
-                timeStart: caption,
-                timeEnd:
-            });
-
-            this.addMessage(message, 'sent', 'LESSON');
-            this.textInput.value = '';
-            this.textInput.focus();
-        }
-
         sendMessage(messageData) {
             try {
                 const chatId = this.chatIdInput.value.trim();
@@ -979,8 +957,6 @@
                     }
                 } else if (messageType === 'SCHEDULE') {
                     messageText = `📅 Check my schedule!`;
-                } else if (messageType === 'LESSON') {
-                    messageText = message.content;
                 } else if (message.content) {
                     messageText = message.content;
                 } else if (message.body) {
