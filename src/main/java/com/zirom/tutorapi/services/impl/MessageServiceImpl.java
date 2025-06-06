@@ -1,6 +1,9 @@
 package com.zirom.tutorapi.services.impl;
 
+import com.nimbusds.oauth2.sdk.Message;
 import com.zirom.tutorapi.domain.dtos.chat.messages.requests.*;
+import com.zirom.tutorapi.domain.dtos.chat.messages.requests.edit.EditMessageRequest;
+import com.zirom.tutorapi.domain.dtos.chat.messages.requests.edit.LessonEditMessageRequest;
 import com.zirom.tutorapi.domain.entities.Chat;
 import com.zirom.tutorapi.domain.entities.User;
 import com.zirom.tutorapi.domain.entities.lesson.Reservation;
@@ -28,13 +31,15 @@ public class MessageServiceImpl implements MessageService {
     private final ChatService chatService;
     private final LessonRequestMessageRepository lessonRequestMessageRepository;
     private final ReservationService reservationService;
+    private final AuthorizationService authorizationService;
 
     @Override
     @Transactional
     public BaseMessage saveMessage(MessageRequest messageRequest, UUID senderId) {
+        Chat chat = chatService.getChatById(messageRequest.getChatId()).orElseThrow(EntityNotFoundException::new);
+        authorizationService.hasAccessToChat(chat, senderId);
         User sender = userService.findById(senderId).orElseThrow(EntityNotFoundException::new);
         User receiver = userService.findById(messageRequest.getReceiverId()).orElseThrow(EntityNotFoundException::new);
-        Chat chat = chatService.getChatById(messageRequest.getChatId()).orElseThrow(EntityNotFoundException::new);
         BaseMessage baseMessage = new BaseMessage();
         baseMessage.setMessageType(messageRequest.getMessageType());
         baseMessage.setSender(sender);
@@ -49,6 +54,21 @@ public class MessageServiceImpl implements MessageService {
         if (messageRequest instanceof LessonRequestMessageRequest lessonRequest) saveLessonRequestMessage(savedMessage, lessonRequest);
 
         return savedMessage;
+    }
+
+    @Override
+    public BaseMessage editMessage(UUID loggedInUserId, EditMessageRequest editMessageRequest) {
+        BaseMessage baseMessage = baseMessageRepository.findById(editMessageRequest.getMessageId()).orElseThrow(EntityNotFoundException::new);
+
+        if (editMessageRequest instanceof LessonEditMessageRequest lessonEditRequest) editLessonRequestMessage(lessonEditRequest, loggedInUserId);
+
+        return baseMessage;
+    }
+
+    private void editLessonRequestMessage(LessonEditMessageRequest lessonEditMessageRequest, UUID loggedInUserId) {
+        LessonRequestMessage requestMessage = lessonRequestMessageRepository.findById(lessonEditMessageRequest.getMessageId()).orElseThrow(EntityNotFoundException::new);
+        UUID reservationId = requestMessage.getReservation().getId();
+        reservationService.changeReservation(loggedInUserId, reservationId, lessonEditMessageRequest.getChangeReservationDto());
     }
 
 

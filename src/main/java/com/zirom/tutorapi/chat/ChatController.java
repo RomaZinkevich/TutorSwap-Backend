@@ -2,6 +2,7 @@ package com.zirom.tutorapi.chat;
 
 import com.zirom.tutorapi.domain.dtos.chat.messages.MessageDto;
 import com.zirom.tutorapi.domain.dtos.chat.messages.requests.MessageRequest;
+import com.zirom.tutorapi.domain.dtos.chat.messages.requests.edit.EditMessageRequest;
 import com.zirom.tutorapi.domain.entities.messages.BaseMessage;
 import com.zirom.tutorapi.mappers.MessageMapper;
 import com.zirom.tutorapi.services.MessageService;
@@ -33,5 +34,17 @@ public class ChatController {
         MessageDto messageDto = messageMapper.toDto(baseMessage, senderId);
 
         messagingTemplate.convertAndSend("/topic/chat." + chatId, messageDto);
+    }
+
+    @MessageMapping("/chat.editMessage")
+    public void editMessage(
+            @Payload EditMessageRequest editMessageRequest,
+            SimpMessageHeaderAccessor headerAccessor
+    ) {
+        UUID senderId = UUID.fromString((String) headerAccessor.getSessionAttributes().get("id"));
+        BaseMessage baseMessage =  messageService.editMessage(senderId, editMessageRequest);
+        MessageDto messageDto = messageMapper.toDto(baseMessage, senderId);
+
+        messagingTemplate.convertAndSend("/topic/chat." + editMessageRequest.getChatId(), messageDto);
     }
 }
