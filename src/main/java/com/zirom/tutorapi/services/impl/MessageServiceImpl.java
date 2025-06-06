@@ -91,7 +91,7 @@ public class MessageServiceImpl implements MessageService {
 
         LessonRequestMessage requestMessage = new LessonRequestMessage();
         requestMessage.setMessage(messageRequest);
-        requestMessage.setDescription(lessonRequest.getDescription());
+        requestMessage.setDescription("Placeholder");
         requestMessage.setTimeStart(timeStart);
         requestMessage.setTimeEnd(timeEnd);
         requestMessage.setReservation(reservation);

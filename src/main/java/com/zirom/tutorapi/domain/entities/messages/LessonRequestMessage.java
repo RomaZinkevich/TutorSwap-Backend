@@ -35,7 +35,6 @@ public class LessonRequestMessage {
     private LocalDateTime timeEnd;
 
     @OneToOne(fetch = FetchType.LAZY)
-    @MapsId
     @JoinColumn(name = "reservation_id", nullable = false,
             foreignKey = @ForeignKey(name = "fk_lessonmessage_reservation",
                     foreignKeyDefinition = "FOREIGN KEY (reservation_id) REFERENCES reservations(id) ON DELETE CASCADE"))
