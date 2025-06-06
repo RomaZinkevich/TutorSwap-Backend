@@ -5,6 +5,7 @@ import com.zirom.tutorapi.domain.dtos.chat.messages.*;
 import com.zirom.tutorapi.domain.entities.Chat;
 import com.zirom.tutorapi.domain.entities.User;
 import com.zirom.tutorapi.domain.entities.messages.*;
+import com.zirom.tutorapi.repositories.ReservationRepository;
 import com.zirom.tutorapi.repositories.messages.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -18,6 +19,7 @@ public class MessageMapper {
     private final ImageMessageRepository imageMessageRepository;
     private final VideoMessageRepository videoMessageRepository;
     private final LessonRequestMessageRepository lessonRequestMessageRepository;
+    private final ReservationRepository reservationRepository;
 
     public MessageDto toDto(BaseMessage message, UUID loggedInUserId) {
         MessageDto dto;
@@ -52,7 +54,7 @@ public class MessageMapper {
 
             case LESSON:
                 LessonRequestMessage lesson = lessonRequestMessageRepository.findById(message.getId()).orElseThrow();
-                RequestState state = lesson.getReservation().getState();
+                RequestState state = reservationRepository.findById(lesson.getReservation().getId()).orElseThrow().getState();
                 LessonRequestMessageDto lessonDto = new LessonRequestMessageDto();
                 lessonDto.setState(state);
                 lessonDto.setDescription(lesson.getDescription());

@@ -96,16 +96,6 @@ public class MessageServiceImpl implements MessageService {
         requestMessage.setTimeEnd(timeEnd);
         requestMessage.setReservation(reservation);
 
-        System.out.println(messageRequest.getId());
-        System.out.println(messageRequest.getMessageType());
-        System.out.println(requestMessage.getMessageId());
-        System.out.println(requestMessage.getMessage().getId());
-        System.out.println(requestMessage.getDescription());
-        System.out.println(requestMessage.getTimeStart());
-        System.out.println(requestMessage.getTimeEnd());
-
         lessonRequestMessageRepository.save(requestMessage);
-
-
     }
 }
