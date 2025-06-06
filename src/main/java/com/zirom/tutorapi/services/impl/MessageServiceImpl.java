@@ -41,8 +41,6 @@ public class MessageServiceImpl implements MessageService {
         baseMessage.setReceiver(receiver);
         baseMessage.setChat(chat);
         BaseMessage savedMessage = baseMessageRepository.save(baseMessage);
-        System.out.println(savedMessage.getId());
-        System.out.println(savedMessage.getMessageType());
 
         if (messageRequest instanceof TextMessageRequest text) saveTextMessage(savedMessage, text.getContent());
         if (messageRequest instanceof ImageMessageRequest image) saveImageMessage(savedMessage, image);
@@ -97,6 +95,15 @@ public class MessageServiceImpl implements MessageService {
         requestMessage.setTimeStart(timeStart);
         requestMessage.setTimeEnd(timeEnd);
         requestMessage.setReservation(reservation);
+
+        System.out.println(messageRequest.getId());
+        System.out.println(messageRequest.getMessageType());
+        System.out.println(requestMessage.getMessageId());
+        System.out.println(requestMessage.getMessage().getId());
+        System.out.println(requestMessage.getDescription());
+        System.out.println(requestMessage.getTimeStart());
+        System.out.println(requestMessage.getTimeEnd());
+
         lessonRequestMessageRepository.save(requestMessage);
 
 
