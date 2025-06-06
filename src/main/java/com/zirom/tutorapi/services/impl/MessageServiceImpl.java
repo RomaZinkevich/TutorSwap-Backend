@@ -1,6 +1,5 @@
 package com.zirom.tutorapi.services.impl;
 
-import com.nimbusds.oauth2.sdk.Message;
 import com.zirom.tutorapi.domain.dtos.chat.messages.requests.*;
 import com.zirom.tutorapi.domain.dtos.chat.messages.requests.edit.EditMessageRequest;
 import com.zirom.tutorapi.domain.dtos.chat.messages.requests.edit.LessonEditMessageRequest;
@@ -68,7 +67,7 @@ public class MessageServiceImpl implements MessageService {
     private void editLessonRequestMessage(LessonEditMessageRequest lessonEditMessageRequest, UUID loggedInUserId) {
         LessonRequestMessage requestMessage = lessonRequestMessageRepository.findById(lessonEditMessageRequest.getMessageId()).orElseThrow(EntityNotFoundException::new);
         UUID reservationId = requestMessage.getReservation().getId();
-        reservationService.changeReservation(loggedInUserId, reservationId, lessonEditMessageRequest.getChangeReservationDto());
+        reservationService.changeReservation(loggedInUserId, reservationId, lessonEditMessageRequest.getChangeReservationRequest());
     }
 
 

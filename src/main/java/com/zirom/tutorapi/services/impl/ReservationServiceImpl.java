@@ -2,11 +2,9 @@ package com.zirom.tutorapi.services.impl;
 
 import com.zirom.tutorapi.domain.RequestState;
 import com.zirom.tutorapi.domain.ReservationDirection;
-import com.zirom.tutorapi.domain.dtos.lesson.ChangeReservationDto;
+import com.zirom.tutorapi.domain.dtos.lesson.ChangeReservationRequest;
 import com.zirom.tutorapi.domain.entities.User;
-import com.zirom.tutorapi.domain.entities.lesson.Lesson;
 import com.zirom.tutorapi.domain.entities.lesson.Reservation;
-import com.zirom.tutorapi.repositories.LessonRepository;
 import com.zirom.tutorapi.repositories.ReservationRepository;
 import com.zirom.tutorapi.repositories.UserRepository;
 import com.zirom.tutorapi.services.AuthorizationService;
@@ -14,8 +12,6 @@ import com.zirom.tutorapi.services.LessonService;
 import com.zirom.tutorapi.services.ReservationService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
-import org.apache.coyote.BadRequestException;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -41,11 +37,13 @@ public class ReservationServiceImpl implements ReservationService {
 
     @Override
     @Transactional
-    public Reservation changeReservation(UUID loggedInUserId, UUID reservationId, ChangeReservationDto changeReservationDto) {
+    public Reservation changeReservation(UUID loggedInUserId, UUID reservationId, ChangeReservationRequest changeReservationRequest) {
         Reservation reservation = reservationRepository.findById(reservationId).orElseThrow(EntityNotFoundException::new);
         if (reservation.getState() != RequestState.PENDING) throw new IllegalArgumentException("Reservation is not pending.");
-        boolean isAccepted = changeReservationDto.isAccepted();
-        String googleMeetUrl = changeReservationDto.getGoogleMeetUrl();
+        System.out.println(changeReservationRequest.getGoogleMeetUrl());
+        System.out.println(changeReservationRequest.isAccepted());
+        boolean isAccepted = changeReservationRequest.isAccepted();
+        String googleMeetUrl = changeReservationRequest.getGoogleMeetUrl();
         authorizationService.canChangeReservation(reservation, loggedInUserId);
         reservation.setState(isAccepted ? RequestState.ACCEPTED : RequestState.REJECTED);
         if (isAccepted) lessonService.createLesson(reservation, googleMeetUrl);
