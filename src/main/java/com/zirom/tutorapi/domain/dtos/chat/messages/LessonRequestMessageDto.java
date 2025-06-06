@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Getter
 @Setter
@@ -17,4 +18,5 @@ public class LessonRequestMessageDto extends MessageDto {
     private LocalDateTime timeStart;
     private LocalDateTime timeEnd;
     private RequestState state;
+    private UUID reservationId;
 }

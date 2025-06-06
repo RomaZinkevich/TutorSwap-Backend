@@ -4,6 +4,7 @@ import com.zirom.tutorapi.domain.RequestState;
 import com.zirom.tutorapi.domain.dtos.chat.messages.*;
 import com.zirom.tutorapi.domain.entities.Chat;
 import com.zirom.tutorapi.domain.entities.User;
+import com.zirom.tutorapi.domain.entities.lesson.Reservation;
 import com.zirom.tutorapi.domain.entities.messages.*;
 import com.zirom.tutorapi.repositories.ReservationRepository;
 import com.zirom.tutorapi.repositories.messages.*;
@@ -54,9 +55,11 @@ public class MessageMapper {
 
             case LESSON:
                 LessonRequestMessage lesson = lessonRequestMessageRepository.findById(message.getId()).orElseThrow();
-                RequestState state = reservationRepository.findById(lesson.getReservation().getId()).orElseThrow().getState();
+                Reservation reservation = reservationRepository.findById(lesson.getReservation().getId()).orElseThrow();
+                RequestState state = reservation.getState();
                 LessonRequestMessageDto lessonDto = new LessonRequestMessageDto();
                 lessonDto.setState(state);
+                lessonDto.setReservationId(reservation.getId());
                 lessonDto.setDescription(lesson.getDescription());
                 lessonDto.setTimeStart(lesson.getTimeStart());
                 lessonDto.setTimeEnd(lesson.getTimeEnd());
